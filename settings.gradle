@@ -1,0 +1,3 @@
+include ':mock-interceptor'
+include ':app'
+rootProject.name = "MockInterceptor"
