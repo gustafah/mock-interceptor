@@ -44,7 +44,7 @@ android {
             mavenDeployer {
                 beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-                repository(url: "https://s01.oss.sonatype.org/service/content/repositories/releases") {
+                repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2") {
                     authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
 
