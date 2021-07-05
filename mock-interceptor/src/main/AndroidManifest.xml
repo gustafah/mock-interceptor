@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.gustafah.android.mock">
+    package="com.gustafah.android.mockinterceptor">
 
     <application>
         <activity
-            android:name=".MockOptionsActivity"
+            android:name="com.gustafah.android.mockinterceptor.ui.MockOptionsActivity"
             android:exported="false"
             android:theme="@style/mock_MainTheme" />
     </application>
