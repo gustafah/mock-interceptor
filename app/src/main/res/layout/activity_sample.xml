@@ -9,7 +9,21 @@
         android:id="@+id/button_sample1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sample 1"
+        android:text="Mocked With Annotation"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/button_sample2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mocked Without Annotation"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/button_sample3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Launch Notification"
         tools:ignore="HardcodedText" />
 
 </LinearLayout>

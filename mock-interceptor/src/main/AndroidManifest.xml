@@ -3,6 +3,8 @@
     package="com.gustafah.android.mockinterceptor">
 
     <application>
+        <receiver android:name=".notification.DefaultMockNotificationReceiver" />
+
         <activity
             android:name="com.gustafah.android.mockinterceptor.ui.MockOptionsActivity"
             android:exported="false"

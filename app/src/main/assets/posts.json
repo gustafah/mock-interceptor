@@ -1,0 +1,65 @@
+{
+  "reference": "Mocked List By Name",
+  "default": -1,
+  "saved_data": [
+    {
+      "description": "1 Value",
+      "code": 200,
+      "data_array": [
+        {
+          "user_id": 1231,
+          "id": 1,
+          "title": "Post #1",
+          "body": "Body of post #1"
+        }
+      ]
+    },
+    {
+      "description": "2 Values",
+      "code": 200,
+      "data_array": [
+        {
+          "user_id": 1231,
+          "id": 1,
+          "title": "Post #1",
+          "body": "Body of post #1"
+        },
+        {
+          "user_id": 1231,
+          "id": 2,
+          "title": "Post #2",
+          "body": "Body of post #2"
+        }
+      ]
+    },
+    {
+      "description": "3 Values",
+      "code": 200,
+      "data_array": [
+        {
+          "user_id": 1231,
+          "id": 1,
+          "title": "Post #1",
+          "body": "Body of post #1"
+        },
+        {
+          "user_id": 1231,
+          "id": 2,
+          "title": "Post #2",
+          "body": "Body of post #2"
+        },
+        {
+          "user_id": 1231,
+          "id": 3,
+          "title": "Post #3",
+          "body": "Body of post #3"
+        }
+      ]
+    },
+    {
+      "description": "Error",
+      "code": 500,
+      "is_unit": true
+    }
+  ]
+}

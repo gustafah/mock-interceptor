@@ -9,10 +9,11 @@ import android.widget.ListView
 import android.widget.SimpleAdapter
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import com.gustafah.android.mockinterceptor.*
-import com.gustafah.android.mockinterceptor.BUNDLE_FIELD_SUBTEXT
-import com.gustafah.android.mockinterceptor.BUNDLE_FIELD_TEXT
-import com.gustafah.android.mockinterceptor.BUNDLE_FIELD_TITLE
+import com.gustafah.android.mockinterceptor.MockInterceptor
+import com.gustafah.android.mockinterceptor.MockUtils.BUNDLE_FIELD_SUBTEXT
+import com.gustafah.android.mockinterceptor.MockUtils.BUNDLE_FIELD_TEXT
+import com.gustafah.android.mockinterceptor.MockUtils.BUNDLE_FIELD_TITLE
+import com.gustafah.android.mockinterceptor.R
 
 class MockOptionsDialog : DialogFragment() {
 

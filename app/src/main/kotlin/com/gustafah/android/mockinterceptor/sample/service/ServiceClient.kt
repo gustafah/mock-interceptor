@@ -1,9 +1,8 @@
-package com.gustafah.android.mockinterceptor.sample.data
+package com.gustafah.android.mockinterceptor.sample.service
 
 import android.content.Context
 import com.gustafah.android.mockinterceptor.MockConfig
 import com.gustafah.android.mockinterceptor.MockInterceptor
-import com.gustafah.android.mockinterceptor.sample.service.SampleApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -16,13 +15,15 @@ fun serviceClient(context: Context): SampleApi {
         .addInterceptor(
             MockInterceptor.apply {
                 config = MockConfig.Builder()
+                    .suffix(".json")
+                    .separator("_")
                     .context { context }
                     .build()
             }
         )
         .build()
     val service = Retrofit.Builder()
-        .baseUrl("BASE_URL")
+        .baseUrl("https://jsonplaceholder.typicode.com")
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

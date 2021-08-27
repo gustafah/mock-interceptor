@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+    <TextView
+        android:id="@+id/logoTitle"
+        style="@style/TextAppearance.Compat.Notification.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_vertical"
+        android:text="@string/mock_notification_logo_title"
+        tools:ignore="UseCompatTextViewDrawableXml" />
+
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.Compat.Notification.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logoTitle"
+        android:layout_marginTop="12dp"
+        android:text="@string/mock_notificaiton_running_mock" />
+
+
+    <TextView
+        android:id="@+id/bodyMessage"
+        style="@style/TextAppearance.Compat.Notification.Info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="4dp"
+        tools:text="@string/mock_notification_default_message" />
+
+    <Button
+        android:id="@+id/switchDefaultMock"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="end|center_vertical"
+        android:textAllCaps="false"
+        tools:text="@string/mock_notification_button_disable_mock"
+        tools:textColor="@color/mock_disable_text_color" />
+
+
+</RelativeLayout>

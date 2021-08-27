@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mock_background_logo_color">#FFCE2E</color>
+    <color name="mock_logo_color">#242424</color>
+    <color name="mock_enable_text_color">#0275c9</color>
+    <color name="mock_disable_text_color">#d70015</color>
+</resources>

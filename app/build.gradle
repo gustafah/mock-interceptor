@@ -6,12 +6,12 @@ plugins {
 
 android {
     defaultConfig {
-        applicationId "com.github.gustafah.mock-interceptor.sample"
+        applicationId "com.github.gustafah.mockinterceptor.sample"
     }
 }
 
 dependencies {
-//    debugImplementation project(":mock-interceptor")
+    implementation project(":mock-interceptor")
 
     debugImplementation 'com.github.gustafah:mock-interceptor:0.0.1'
 

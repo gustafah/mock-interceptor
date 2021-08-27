@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="mock_name">Mock</string>
+    <string name="mock_notification_logo_title">Mock Interceptor</string>
+    <string name="mock_notificaiton_running_mock">Mocking Responses…</string>
+    <string name="mock_notification_default_message">Using default messages…</string>
+    <string name="mock_notification_select_message">User selects responses…</string>
+    <string name="mock_notification_button_enable_mock">Manual</string>
+    <string name="mock_notification_button_disable_mock">Automatic</string>
 </resources>

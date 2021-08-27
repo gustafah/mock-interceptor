@@ -15,4 +15,13 @@ class SampleRepository(private val service: SampleApi) {
         }
     }
 
+    fun fetchResponse2() = liveData {
+        val response = service.fetchNoMock()
+        if (response.isSuccessful) {
+            emit(Response.Success(data = response.body()))
+        } else {
+            emit(Response.Error(exception = Exception("Fail to fetch Response")))
+        }
+    }
+
 }

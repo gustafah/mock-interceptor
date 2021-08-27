@@ -5,9 +5,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.gustafah.android.mockinterceptor.BUNDLE_FIELD_SUBTEXT
-import com.gustafah.android.mockinterceptor.BUNDLE_FIELD_TEXT
-import com.gustafah.android.mockinterceptor.BUNDLE_FIELD_TITLE
+import com.gustafah.android.mockinterceptor.MockUtils.BUNDLE_FIELD_SUBTEXT
+import com.gustafah.android.mockinterceptor.MockUtils.BUNDLE_FIELD_TEXT
+import com.gustafah.android.mockinterceptor.MockUtils.BUNDLE_FIELD_TITLE
 
 class MockOptionsActivity : AppCompatActivity(), DialogInterface.OnDismissListener {
 

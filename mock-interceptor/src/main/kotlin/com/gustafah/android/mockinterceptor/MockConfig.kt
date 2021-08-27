@@ -1,8 +1,15 @@
 package com.gustafah.android.mockinterceptor
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode
+import com.gustafah.android.mockinterceptor.MockUtils.DEFAULT_MOCK_KEY
+import com.gustafah.android.mockinterceptor.MockUtils.ERROR_JSON_NOT_FOUND
+import com.gustafah.android.mockinterceptor.MockUtils.prefs
 import okhttp3.Request
+import retrofit2.Invocation
 import java.io.InputStream
 import java.security.InvalidParameterException
 
@@ -40,6 +47,7 @@ class MockConfig private constructor(builder: Builder) {
         selectorMode = builder.selectorMode
         context =
             builder.context ?: throw (InvalidParameterException("No Context"))
+        prefs = PreferenceManager.getDefaultSharedPreferences(context())
     }
 
     /**
@@ -50,15 +58,18 @@ class MockConfig private constructor(builder: Builder) {
     fun fetchFileNameFromUrl(request: Request): String {
         val postfix = "$assetsSeparator${request.method}$assetsSuffix"
         val segments = request.url.pathSegments
-        requestArguments = getArguments(request)
-        var fileName = segments.filter {
-            requestArguments.contains(it).not()
-        }.joinToString(assetsSeparator, assetsPrefix, postfix)
+        val fileName =
+            request.tag(Invocation::class.java)?.method()?.getAnnotation(Mock::class.java)?.path
+                ?: kotlin.run {
+                    requestArguments = getArguments(request)
+                    segments.filter {
+                        requestArguments.contains(it).not()
+                    }.joinToString(assetsSeparator, assetsPrefix, postfix)
+                }
         return getFileFromAssetManager(fileName)?.let {
             getContentFromInputStream(it)
         } ?: run {
-            fileName = segments.joinToString(assetsSeparator, assetsPrefix, postfix)
-            getContentFromFileName(fileName)
+            getContentFromFileName(segments.joinToString(assetsSeparator, assetsPrefix, postfix))
         }
     }
 
@@ -156,3 +167,6 @@ class MockConfig private constructor(builder: Builder) {
         NO_SELECTION
     }
 }
+
+@Target(AnnotationTarget.FUNCTION)
+annotation class Mock(val path: String)
