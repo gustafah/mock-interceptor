@@ -61,11 +61,11 @@ class MockConfig private constructor(builder: Builder) {
         val fileName =
             request.tag(Invocation::class.java)?.method()?.getAnnotation(Mock::class.java)?.path
                 ?: kotlin.run {
-                    requestArguments = getArguments(request)
                     segments.filter {
                         requestArguments.contains(it).not()
                     }.joinToString(assetsSeparator, assetsPrefix, postfix)
                 }
+        requestArguments = getArguments(request)
         return getFileFromAssetManager(fileName)?.let {
             getContentFromInputStream(it)
         } ?: run {
