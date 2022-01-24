@@ -8,12 +8,25 @@ android {
     defaultConfig {
         applicationId "com.github.gustafah.mockinterceptor.sample"
     }
+
+    flavorDimensions "dim"
+    productFlavors {
+        noclient {
+            versionNameSuffix "-no-op"
+            dimension = "dim"
+            matchingFallbacks = ["noclient"]
+        }
+        client {
+            versionNameSuffix "-mocked"
+            dimension = "dim"
+            matchingFallbacks = ["client"]
+        }
+    }
+
 }
 
 dependencies {
     implementation project(":mock-interceptor")
-
-    debugImplementation 'com.github.gustafah:mock-interceptor:0.0.1'
 
     implementation 'com.squareup.okhttp3:okhttp:4.0.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.0.1'

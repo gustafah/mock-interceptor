@@ -167,6 +167,3 @@ class MockConfig private constructor(builder: Builder) {
         NO_SELECTION
     }
 }
-
-@Target(AnnotationTarget.FUNCTION)
-annotation class Mock(val path: String)
