@@ -6,14 +6,6 @@ plugins {
     id 'signing'
 }
 
-group = "com.github.gustafah"
-archivesBaseName = "mock-interceptor"
-version = application.versionName
-
-signing {
-    sign configurations.archives
-}
-
 android {
 
     flavorDimensions "dim"
@@ -27,40 +19,175 @@ android {
             dimension = "dim"
         }
     }
+}
 
-    task sourcesJar(type: Jar) {
-        from android.sourceSets.main.java.srcDirs
-        classifier = 'sources'
+task sourcesNoOpJar(type: Jar) {
+    group = "publish"
+    from android.sourceSets.main.kotlin.srcDirs
+    archiveClassifier = 'sourcesNoOp'
+}
+
+task sourcesJar(type: Jar) {
+    group = "publish"
+    from android.sourceSets.client.kotlin.srcDirs
+    archiveClassifier = 'sourcesClient'
+}
+
+task javadocNoOp(type: Javadoc) {
+    group = "publish"
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadoc(type: Javadoc) {
+    group = "publish"
+    source = android.sourceSets.client.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocNoOpJar(type: Jar, dependsOn: javadocNoOp) {
+    group = "publish"
+    archiveClassifier = 'javadocNoOp'
+    from javadocNoOp.destinationDir
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    group = "publish"
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+tasks.withType(Javadoc) {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('encoding', 'UTF-8')
+}
+
+publishing {
+    publications {
+        NoOp(MavenPublication) {
+            groupId = 'com.github.gustafah'
+            artifactId = 'mock-interceptor-noclient'
+            version = application.versionName
+
+            artifact sourcesNoOpJar
+            artifact javadocNoOpJar
+
+            pom {
+
+                name = 'Mock Interceptor No-Op'
+                description = 'An interceptor for Mocking Requests :)'
+                url = 'https://github.com/gustafah/mock-interceptor'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = developerId
+                        name = developerName
+                        email = developerEmail
+                    }
+                }
+                scm {
+                    url = 'https://github.com/gustafah/mock-interceptor'
+                    connection = "scm:https://github.com/gustafah/mock-interceptor.git"
+                    developerConnection = 'scm:git@github.com:gustafah/mock-interceptor.git'
+                }
+            }
+        }
+        Client(MavenPublication) {
+            groupId = 'com.github.gustafah'
+            artifactId = 'mock-interceptor'
+            version = application.versionName
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+
+                name = 'Mock Interceptor'
+                description = 'An interceptor for Mocking Requests :)'
+                url = 'https://github.com/gustafah/mock-interceptor'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = developerId
+                        name = developerName
+                        email = developerEmail
+                    }
+                }
+                scm {
+                    url = 'https://github.com/gustafah/mock-interceptor'
+                    connection = "scm:https://github.com/gustafah/mock-interceptor.git"
+                    developerConnection = 'scm:git@github.com:gustafah/mock-interceptor.git'
+                }
+            }
+        }
     }
-
-    task javadoc(type: Javadoc) {
-        excludes = ['**/*.kt']
-        source = android.sourceSets.main.java.srcDirs
-        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    repositories {
+        maven {
+//            url = project.rootProject.buildDir
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
     }
+}
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
+signing {
+    sign publishing.publications.NoOp
+    sign publishing.publications.Client
+}
 
-    tasks.withType(Javadoc) {
-        options.addStringOption('Xdoclint:none', '-quiet')
-        options.addStringOption('encoding', 'UTF-8')
-    }
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-    artifacts {
-        archives javadocJar, sourcesJar
-    }
-
-
-    uploadArchives {
-        repositories {
-            maven {
-                name = "Bacate"
-                url = project.rootProject.buildDir
+            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
             }
 
+            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Mock Interceptor'
+                packaging 'jar'
+                description 'An interceptor for Mocking Requests :)'
+                url 'https://github.com/gustafah/mock-interceptor'
+
+                scm {
+                    url 'https://github.com/gustafah/mock-interceptor'
+                    connection "scm:https://github.com/gustafah/mock-interceptor.git"
+                    developerConnection 'scm:git@github.com:gustafah/mock-interceptor.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id developerId
+                        name developerName
+                        email developerEmail
+                    }
+                }
+            }
         }
     }
 }
@@ -70,117 +197,6 @@ dependencies {
     implementation dependency_versions.coreKtx
     implementation dependency_versions.appCompat
 
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.0.1'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            android.productFlavors.each { flavor ->
-                "${flavor.name}Release"(MavenPublication) {
-                    //from components["${flavor.name}Release"]
-
-                    groupId = "com.github.gustafah"
-//                    if(flavor.name == "client"){
-                        artifactId = "${project.name}"
-//                    }else{
-//                        artifactId = "${project.name}-${flavor.name}"
-//                    }
-                    version = application.versionName
-
-                    artifact("${project.buildDir}/outputs/aar/${project.name}-client-release.aar") {
-                        classifier null
-                        extension "aar"
-                    }
-                    artifact("$buildDir/libs/${project.name}-${application.versionName}-javadoc.jar") {
-                        classifier "javadoc"
-                        extension "jar"
-                    }
-                    artifact("$buildDir/libs/${project.name}-${application.versionName}-javadoc.jar.asc") {
-                        classifier "javadoc"
-                        extension "jar.asc"
-                    }
-                    artifact("$buildDir/libs/${project.name}-${application.versionName}-sources.jar") {
-                        classifier "sources"
-                        extension "jar"
-                    }
-                    artifact("$buildDir/libs/${project.name}-${application.versionName}-sources.jar.asc") {
-                        classifier "sources"
-                        extension "jar.asc"
-                    }
-
-                    pom {
-                        name = 'Mock Interceptor'
-                        description = 'An interceptor for Mocking Requests :)'
-                        url = 'https://github.com/gustafah/mock-interceptor'
-
-                        scm {
-                            url = 'https://github.com/gustafah/mock-interceptor'
-                            connection = "scm:https://github.com/gustafah/mock-interceptor.git"
-                            developerConnection = 'scm:git@github.com:gustafah/mock-interceptor.git'
-                        }
-
-                        licenses {
-                            license {
-                                name = 'The Apache License, Version 2.0'
-                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            }
-                        }
-
-                        developers {
-                            developer {
-                                id = developerId
-                                name = developerName
-                                email = developerEmail
-                            }
-                        }
-                    }
-
-                    // sign the pom
-                    pom.withXml {
-
-                        def aabFile = file("${project.buildDir}/outputs/aar/${project.name}-client-release.aar")
-                        writeTo(aabFile)
-                        def aabAscFile = signing.sign(aabFile).signatureFiles[0]
-                        artifact(aabAscFile) {
-                            classifier = null
-                            extension = 'aar.asc'
-                        }
-
-                        def moduleFile = file("${project.buildDir}/publications/${flavor.name}Release/module.json")
-                        writeTo(moduleFile)
-                        def moduleAscFile = signing.sign(moduleFile).signatureFiles[0]
-                        artifact(moduleAscFile) {
-                            classifier = null
-                            extension = 'module.asc'
-                        }
-
-                        def pomFile = file("${project.buildDir}/publications/${flavor.name}Release/pom-default.xml")
-                        writeTo(pomFile)
-                        def pomAscFile = signing.sign(pomFile).signatureFiles[0]
-                        artifact(pomAscFile) {
-                            classifier = null
-                            extension = 'pom.asc'
-                        }
-                    }
-                }
-            }
-        }
-        repositories {
-            maven {
-                name = "ProjectPath"
-                url = project.rootProject.buildDir
-            }
-            maven {
-                name = "Sonatype"
-                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
-
-                credentials {
-                    username = ossrhUsername
-                    password = ossrhPassword
-                }
-            }
-        }
-    }
 }
