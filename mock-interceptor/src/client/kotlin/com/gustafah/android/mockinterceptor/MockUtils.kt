@@ -19,6 +19,7 @@ object MockUtils {
     internal const val JSON_FIELD_SAVED_DATA = "saved_data"
     internal const val JSON_FIELD_DEFAULT = "default"
     internal const val JSON_FIELD_DESCRIPTION = "description"
+    internal const val JSON_FIELD_EXTERNAL_LIST = "external_list"
     internal const val JSON_FIELD_CODE = "code"
     internal const val JSON_FIELD_FILTER = "filter"
     internal const val JSON_FIELD_DATA = "data"
