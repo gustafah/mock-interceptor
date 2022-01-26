@@ -24,13 +24,13 @@ android {
 task sourcesNoOpJar(type: Jar) {
     group = "publish"
     from android.sourceSets.main.kotlin.srcDirs
-    archiveClassifier = 'sourcesNoOp'
+    archiveClassifier = 'sources'
 }
 
 task sourcesJar(type: Jar) {
     group = "publish"
     from android.sourceSets.client.kotlin.srcDirs
-    archiveClassifier = 'sourcesClient'
+    archiveClassifier = 'sources'
 }
 
 task javadocNoOp(type: Javadoc) {
@@ -47,7 +47,7 @@ task javadoc(type: Javadoc) {
 
 task javadocNoOpJar(type: Jar, dependsOn: javadocNoOp) {
     group = "publish"
-    archiveClassifier = 'javadocNoOp'
+    archiveClassifier = 'javadoc'
     from javadocNoOp.destinationDir
 }
 
@@ -71,6 +71,7 @@ publishing {
 
             artifact sourcesNoOpJar
             artifact javadocNoOpJar
+            artifact "$buildDir/outputs/aar/mock-interceptor-noclient-release.aar"
 
             pom {
 
@@ -104,6 +105,7 @@ publishing {
 
             artifact sourcesJar
             artifact javadocJar
+            artifact "$buildDir/outputs/aar/mock-interceptor-client-release.aar"
 
             pom {
 
