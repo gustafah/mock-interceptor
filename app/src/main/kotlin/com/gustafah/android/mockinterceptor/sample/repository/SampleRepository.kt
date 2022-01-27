@@ -24,4 +24,13 @@ class SampleRepository(private val service: SampleApi) {
         }
     }
 
+    fun fetchResponse3() = liveData {
+        val response = service.fetchMultiMock()
+        if (response.isSuccessful) {
+            emit(Response.Success(data = response.body()))
+        } else {
+            emit(Response.Error(exception = Exception("Fail to fetch Response")))
+        }
+    }
+
 }

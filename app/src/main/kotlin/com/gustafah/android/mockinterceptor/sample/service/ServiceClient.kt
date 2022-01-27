@@ -3,8 +3,10 @@ package com.gustafah.android.mockinterceptor.sample.service
 import android.content.Context
 import com.gustafah.android.mockinterceptor.MockConfig
 import com.gustafah.android.mockinterceptor.MockInterceptor
+import com.gustafah.android.mockinterceptor.sample.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.jetbrains.annotations.TestOnly
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -15,9 +17,11 @@ fun serviceClient(context: Context): SampleApi {
         .addInterceptor(
             MockInterceptor.apply {
                 config = MockConfig.Builder()
-                    .suffix(".json")
-                    .separator("_")
-                    .context { context }
+                    .suffix(".json") //optional
+                    .separator("_") //optional
+                    .prefix("mock/") //optional
+                    .context { context } //mandatory
+                    .selectorMode(MockConfig.OptionsSelectorMode.STANDARD) //recommended
                     .build()
             }
         )

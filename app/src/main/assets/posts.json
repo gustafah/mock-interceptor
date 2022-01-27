@@ -55,11 +55,6 @@
           "body": "Body of post #3"
         }
       ]
-    },
-    {
-      "description": "Error",
-      "code": 500,
-      "is_unit": true
     }
   ]
 }

@@ -23,6 +23,13 @@
         android:id="@+id/button_sample3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Multi Mocked"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/button_sample4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Launch Notification"
         tools:ignore="HardcodedText" />
 

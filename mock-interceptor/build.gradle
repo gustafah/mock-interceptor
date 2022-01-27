@@ -1,21 +1,31 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'maven'
     id 'maven-publish'
     id 'signing'
 }
 
 android {
 
+    compileSdkVersion application.compileSdk
+    buildToolsVersion application.buildTools
+
+    defaultConfig {
+        minSdkVersion application.minSdk
+        targetSdkVersion application.targetSdk
+        versionCode application.versionCode
+        versionName application.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
     flavorDimensions "dim"
     productFlavors {
         noclient {
-            versionNameSuffix "-no-op"
             dimension = "dim"
         }
         client {
-            versionNameSuffix ""
             dimension = "dim"
         }
     }
@@ -148,50 +158,6 @@ publishing {
 signing {
     sign publishing.publications.NoOp
     sign publishing.publications.Client
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            pom.project {
-                name 'Mock Interceptor'
-                packaging 'jar'
-                description 'An interceptor for Mocking Requests :)'
-                url 'https://github.com/gustafah/mock-interceptor'
-
-                scm {
-                    url 'https://github.com/gustafah/mock-interceptor'
-                    connection "scm:https://github.com/gustafah/mock-interceptor.git"
-                    developerConnection 'scm:git@github.com:gustafah/mock-interceptor.git'
-                }
-
-                licenses {
-                    license {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id developerId
-                        name developerName
-                        email developerEmail
-                    }
-                }
-            }
-        }
-    }
 }
 
 dependencies {

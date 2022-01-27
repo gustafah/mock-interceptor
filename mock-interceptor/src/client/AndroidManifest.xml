@@ -9,6 +9,10 @@
             android:name="com.gustafah.android.mockinterceptor.ui.MockOptionsActivity"
             android:exported="false"
             android:theme="@style/mock_MainTheme" />
+        <activity
+            android:name="com.gustafah.android.mockinterceptor.ui.MockReferenceActivity"
+            android:exported="false"
+            android:theme="@style/mock_MainTheme" />
     </application>
 
 </manifest>

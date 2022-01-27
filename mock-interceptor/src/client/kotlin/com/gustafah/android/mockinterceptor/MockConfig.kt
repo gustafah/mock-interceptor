@@ -1,16 +1,13 @@
 package com.gustafah.android.mockinterceptor
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode
-import com.gustafah.android.mockinterceptor.MockUtils.DEFAULT_MOCK_KEY
 import com.gustafah.android.mockinterceptor.MockUtils.ERROR_JSON_NOT_FOUND
 import com.gustafah.android.mockinterceptor.MockUtils.prefs
 import okhttp3.Request
+import org.json.JSONObject
 import retrofit2.Invocation
-import java.io.InputStream
 import java.security.InvalidParameterException
 
 /**
@@ -55,29 +52,47 @@ class MockConfig private constructor(builder: Builder) {
      * @param request from okhttp3.Request
      * @return [getContent]
      */
-    fun fetchFileNameFromUrl(request: Request): String {
+    fun fetchFileNameFromUrl(request: Request): JSONObject {
         val postfix = "$assetsSeparator${request.method}$assetsSuffix"
         val segments = request.url.pathSegments
-        val fileName =
-            request.tag(Invocation::class.java)?.method()?.getAnnotation(Mock::class.java)?.path
-                ?: kotlin.run {
-                    segments.filter {
-                        requestArguments.contains(it).not()
-                    }.joinToString(assetsSeparator, assetsPrefix, postfix)
-                }
         requestArguments = getArguments(request)
-        return getFileFromAssetManager(fileName)?.let {
-            getContentFromInputStream(it)
-        } ?: run {
-            getContentFromFileName(segments.joinToString(assetsSeparator, assetsPrefix, postfix))
+        val fileName = getFileFromMockAnnotation(request) ?: kotlin.run {
+            arrayOf(segments.filter {
+                requestArguments.contains(it).not()
+            }.joinToString(assetsSeparator, assetsPrefix, postfix))
+        }
+        return JSONObject().apply {
+            fileName.forEach {
+                put(it, JSONObject(
+                        MockParser.getContentFromAsset(context(), it) ?: String.format(
+                            ERROR_JSON_NOT_FOUND,
+                            fileName,
+                            if (requestArguments.isNotEmpty()) {
+                                requestArguments.joinToString(separator = "\", \"")
+                            } else {
+                                ""
+                            }
+                        )
+                    )
+                )
+            }
         }
     }
 
+    private fun getFileFromMockAnnotation(request: Request) =
+        request.tag(Invocation::class.java)?.method()?.getAnnotation(Mock::class.java)?.let {
+            when {
+                it.path.isNotEmpty() -> arrayOf(it.path)
+                it.files.isNotEmpty() -> it.files
+                else -> arrayOf()
+            }
+        }
+
     private fun getArguments(request: Request): List<String> {
         val pathParams = request.tags()?.values?.first()?.let {
-            val clazz = (it as retrofit2.Invocation)
+            val clazz = (it as Invocation)
             clazz.arguments().filterIsInstance<String>()
-        } ?: emptyList<String>()
+        } ?: emptyList()
 
         val params = arrayListOf<String>()
         for (i in 0 until request.url.querySize) {
@@ -97,54 +112,18 @@ class MockConfig private constructor(builder: Builder) {
     }
 
     /**
-     * Gets the content of a Mock File from it's name
-     * @param fileName - The name (path) of the Mock File
-     * @return the content of the file, as String
-     */
-    fun getContentFromFileName(fileName: String) =
-        getFileFromAssetManager(fileName)?.let { getContentFromInputStream(it) }
-            ?: String.format(
-                ERROR_JSON_NOT_FOUND,
-                fileName,
-                if (requestArguments.isNotEmpty()) {
-                    requestArguments.joinToString(separator = "\", \"")
-                } else {
-                    ""
-                }
-            )
-
-    /**
-     * Uses the provided [context] to access the Assets Folder and retrieve a file content
-     * @param fileName - The name (path) of the Mock File
-     * @return the content of the file, as InputStream, for reading
-     */
-    private fun getFileFromAssetManager(fileName: String) = try {
-        context().assets.open(fileName)
-    } catch (ignored: Exception) {
-        null
-    }
-
-    /**
-     * Gets the actual content, as String, from a InputStream
-     * @param inputStream, the InputStream of the file
-     * @return Actual content of the InputStream, as String
-     */
-    private fun getContentFromInputStream(inputStream: InputStream) =
-        inputStream.bufferedReader().use { it.readText() }
-
-    /**
      * A Builder class to create a MockConfig
      */
     class Builder {
-        var assetsPrefix: String = ""
+        internal var assetsPrefix: String = ""
             private set
-        var assetsSuffix: String = ""
+        internal var assetsSuffix: String = ""
             private set
-        var assetsSeparator: String = ""
+        internal var assetsSeparator: String = ""
             private set
-        var context: (() -> Context)? = null
+        internal var context: (() -> Context)? = null
             private set
-        var selectorMode: OptionsSelectorMode = OptionsSelectorMode.ALWAYS_ON_TOP
+        internal var selectorMode: OptionsSelectorMode = OptionsSelectorMode.ALWAYS_ON_TOP
             private set
 
         fun prefix(prefix: String) = apply { this.assetsPrefix = prefix }
@@ -160,6 +139,7 @@ class MockConfig private constructor(builder: Builder) {
      * OptionsSelectorMode.ALWAYS_ON_TOP WILL cause your onResume to be called
      * OptionsSelectorMode.STANDARD MAY cause the Options Dialog to display under
      * certain views, depending on how they are added to your view stash.
+     * OptionsSelectorMode.NO_SELECTION won't display dialog
      */
     enum class OptionsSelectorMode {
         ALWAYS_ON_TOP,

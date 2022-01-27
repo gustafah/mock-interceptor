@@ -1,6 +1,7 @@
 package com.gustafah.android.mockinterceptor
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.SharedPreferences
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Protocol
@@ -45,22 +46,15 @@ object MockUtils {
             return getPrefs(DEFAULT_MOCK_KEY, false)
         }
 
-    internal fun mockResponse(savedData: JSONObject, request: Request): Response {
+    internal fun processSavedData(
+        context: Context,
+        savedData: JSONObject,
+        request: Request
+    ): Response {
         var code = savedData.getInt(JSON_FIELD_CODE)
-        val json = when {
-            savedData.has(JSON_FIELD_DATA) -> savedData.getJSONObject(JSON_FIELD_DATA).toString()
-            savedData.has(JSON_FIELD_DATA_ARRAY) -> savedData.getJSONArray(JSON_FIELD_DATA_ARRAY)
-                .toString()
-            savedData.has(JSON_FIELD_DATA_PATH) -> MockInterceptor.config.getContentFromFileName(
-                savedData.getString(
-                    JSON_FIELD_DATA_PATH
-                )
-            )
-            savedData.optBoolean(JSON_FIELD_IS_UNIT, false) -> ""
-            else -> {
-                code = 502
-                ERROR_JSON_NO_DATA
-            }
+        val json = MockParser.getMockedData(context, savedData) ?: kotlin.run {
+            code = 502
+            ERROR_JSON_NO_DATA
         }
         return mockResponse(code, json, request)
     }

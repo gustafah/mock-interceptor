@@ -1,0 +1,16 @@
+{
+  "reference": "Error List",
+  "default": -1,
+  "saved_data": [
+    {
+      "description": "Empty",
+      "code": 200,
+      "data_array": []
+    },
+    {
+      "description": "Error",
+      "code": 500,
+      "is_unit": true
+    }
+  ]
+}
