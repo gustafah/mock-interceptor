@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath dependency_versions.gradle
+        classpath 'com.android.tools.build:gradle:7.0.4'
         classpath dependency_versions.kotlinGradle
     }
 }
@@ -25,25 +25,6 @@ allprojects {
         if (!project.hasProperty("android")) return
 
         android {
-            compileSdkVersion application.compileSdk
-            buildToolsVersion application.buildTools
-
-            defaultConfig {
-                minSdkVersion application.minSdk
-                targetSdkVersion application.targetSdk
-                versionCode application.versionCode
-                versionName application.versionName
-
-                testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-                consumerProguardFiles "consumer-rules.pro"
-            }
-
-            buildTypes {
-                release {
-                    minifyEnabled false
-                    proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-                }
-            }
 
             compileOptions {
                 sourceCompatibility JavaVersion.VERSION_1_8
