@@ -30,6 +30,13 @@
         android:id="@+id/button_sample4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="No Mock No File"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/button_sample5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Launch Notification"
         tools:ignore="HardcodedText" />
 

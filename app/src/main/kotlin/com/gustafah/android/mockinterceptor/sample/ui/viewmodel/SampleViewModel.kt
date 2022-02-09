@@ -24,6 +24,10 @@ class SampleViewModel(private val repository: SampleRepository) {
         sendToLiveData(repository.fetchResponse3())
     }
 
+    fun fetchResponse4() {
+        sendToLiveData(repository.fetchResponse4())
+    }
+
     private fun sendToLiveData(response: LiveData<Response<List<FetchResponse>?>>) =
         _responseLiveData.addSource(response) {
             when (it) {

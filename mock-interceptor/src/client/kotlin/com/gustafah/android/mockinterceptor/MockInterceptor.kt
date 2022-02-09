@@ -2,6 +2,7 @@ package com.gustafah.android.mockinterceptor
 
 import androidx.appcompat.app.AppCompatActivity
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode.NO_SELECTION
+import com.gustafah.android.mockinterceptor.MockUtils.ERROR_JSON_NO_DATA
 import com.gustafah.android.mockinterceptor.MockUtils.JSON_FIELD_REFERENCE
 import com.gustafah.android.mockinterceptor.MockUtils.JSON_FIELD_SAVED_DATA
 import com.gustafah.android.mockinterceptor.MockUtils.mockResponse
@@ -17,7 +18,6 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import org.json.JSONObject
-import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -42,8 +42,14 @@ object MockInterceptor : Interceptor {
         val mockContent = config.fetchFileNameFromUrl(request)
         mockContent.let {
             return when (it.names()?.length() ?: 0) {
-                0 -> mockResponse(code = 502, jsonResponse = it.toString(), request = request)
-                1 -> makeMockResponse(JSONObject(it.getString(it.names()?.getString(0)!!)), request)
+                0 -> mockResponse(code = 502, jsonResponse = ERROR_JSON_NO_DATA, request = request)
+                1 -> {
+                    val json = JSONObject(it.getString(it.names()?.getString(0)!!))
+                    if (json.has("type"))
+                        mockResponse(code = 502, jsonResponse = json.toString(), request = request)
+                    else
+                        makeMockResponse(json, request)
+                }
                 else -> makeMultiMockResponse(it, request)
             }
         }
