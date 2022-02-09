@@ -66,7 +66,7 @@ class MockConfig private constructor(builder: Builder) {
                 put(it, JSONObject(
                         MockParser.getContentFromAsset(context(), it) ?: String.format(
                             ERROR_JSON_NOT_FOUND,
-                            fileName,
+                            it,
                             if (requestArguments.isNotEmpty()) {
                                 requestArguments.joinToString(separator = "\", \"")
                             } else {

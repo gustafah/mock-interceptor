@@ -29,6 +29,9 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
             viewModel.fetchResponse3()
         }
         button_sample4.setOnClickListener {
+            viewModel.fetchResponse4()
+        }
+        button_sample5.setOnClickListener {
             MockNotification.showMockNotification(this)
         }
         viewModel.responseLiveData.observe(this) {

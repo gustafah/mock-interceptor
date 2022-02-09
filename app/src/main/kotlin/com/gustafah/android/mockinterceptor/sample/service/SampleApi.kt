@@ -18,4 +18,7 @@ interface SampleApi {
     @Mock(files = ["posts.json", "error.json"])
     suspend fun fetchMultiMock(): Response<List<FetchResponse>>
 
+    @GET("comments")
+    suspend fun fetchNoMockNoFile(): Response<List<FetchResponse>>
+
 }
