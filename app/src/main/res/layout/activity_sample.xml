@@ -81,7 +81,9 @@
         android:id="@+id/linear_mock_file"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:text="Launch Notification"
+        android:orientation="vertical"
+        tools:ignore="HardcodedText" >
 
         <TextView
             android:layout_width="match_parent"
@@ -116,9 +118,30 @@
             android:id="@+id/button_sample4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="No Mock No File"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_sample5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Launch Notification"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:layout_marginVertical="16dp">
+
+        <TextView
+            android:id="@+id/text_response"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"/>
+
+    </ScrollView>
 
 </LinearLayout>

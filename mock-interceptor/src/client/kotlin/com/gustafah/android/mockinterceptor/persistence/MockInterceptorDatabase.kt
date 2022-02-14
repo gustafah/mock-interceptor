@@ -13,7 +13,7 @@ import java.io.File
     exportSchema = true,
     entities = [MockEntity::class]
 )
-abstract class MockInterceptorDatabase : RoomDatabase() {
+internal abstract class MockInterceptorDatabase : RoomDatabase() {
 
     companion object {
         const val NAME = "mock-interceptor.db"

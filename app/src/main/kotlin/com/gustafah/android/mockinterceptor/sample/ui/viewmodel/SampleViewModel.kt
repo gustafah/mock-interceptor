@@ -12,6 +12,10 @@ class SampleViewModel(private val repository: SampleRepository) {
     val responseLiveData: LiveData<List<FetchResponse>>
         get() = _responseLiveData
 
+    private val _responseErrorLiveData = MediatorLiveData<String>()
+    val responseErrorLiveData: LiveData<String>
+        get() = _responseErrorLiveData
+
     fun fetchResponse() {
         sendToLiveData(repository.fetchResponse())
     }
@@ -24,6 +28,10 @@ class SampleViewModel(private val repository: SampleRepository) {
         sendToLiveData(repository.fetchResponse3())
     }
 
+    fun fetchResponse4() {
+        sendToLiveData(repository.fetchResponse4())
+    }
+
     private fun sendToLiveData(response: LiveData<Response<List<FetchResponse>?>>) =
         _responseLiveData.addSource(response) {
             when (it) {
@@ -31,7 +39,7 @@ class SampleViewModel(private val repository: SampleRepository) {
                     _responseLiveData.postValue(it.data ?: emptyList())
                 }
                 is Response.Error -> {
-                    it.exception.printStackTrace()
+                    _responseErrorLiveData.postValue(it.exception.message)
                 }
             }
         }

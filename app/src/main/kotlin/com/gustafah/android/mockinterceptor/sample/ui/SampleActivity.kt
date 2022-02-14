@@ -51,13 +51,36 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample),
             triggerRebirth()
         }
 
-
         linear_database.isVisible = isOnSaveMockMode
         linear_mock_file.isVisible = !isOnSaveMockMode
+
+        setupMocksFromDatabase(viewModel, saveMockMode)
+        setupMocksFromMockFile(viewModel)
+
+        viewModel.responseLiveData.observe(this) {
+            it.forEach { data ->
+                println(data.toJson())
+                text_response.append(data.toJson())
+            }
+        }
+        viewModel.responseErrorLiveData.observe(this) {
+            AlertDialog.Builder(this)
+                .setTitle("Error")
+                .setMessage(it)
+                .setPositiveButton(
+                    "Ok"
+                ) { _, _ -> }
+                .show()
+        }
+    }
+
+    private fun setupMocksFromDatabase(viewModel: SampleViewModel, saveMockMode: Int) {
+        button_fetch_response.text =
+            if (saveMockMode == MockUtils.SAVE_MOCK_MODE_RECORDING) "Fetch Response from API"
+            else "Fetch Response from Database"
         button_fetch_response.setOnClickListener {
             viewModel.fetchResponse()
         }
-
         button_export_database.setOnClickListener {
             MockInterceptor.exportDatabase(this)
         }
@@ -67,6 +90,9 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample),
         button_delete_database.setOnClickListener {
             MockInterceptor.deleteDatabase(this)
         }
+    }
+
+    private fun setupMocksFromMockFile(viewModel: SampleViewModel) {
         button_sample1.setOnClickListener {
             viewModel.fetchResponse()
         }
@@ -77,10 +103,10 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample),
             viewModel.fetchResponse3()
         }
         button_sample4.setOnClickListener {
-            MockNotification.showMockNotification(this)
+            viewModel.fetchResponse4()
         }
-        viewModel.responseLiveData.observe(this) {
-            it.forEach { data -> println(data) }
+        button_sample5.setOnClickListener {
+            MockNotification.showMockNotification(this)
         }
     }
 

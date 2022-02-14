@@ -9,6 +9,7 @@ import com.gustafah.android.mockinterceptor.MockUtils.ERROR_JSON_NOT_FOUND
 import com.gustafah.android.mockinterceptor.MockUtils.JSON_FIELD_REFERENCE
 import com.gustafah.android.mockinterceptor.MockUtils.JSON_FIELD_SAVED_DATA
 import com.gustafah.android.mockinterceptor.MockUtils.SAVE_MOCK_MODE_PLAYBACK
+import com.gustafah.android.mockinterceptor.MockUtils.SAVE_MOCK_MODE_RECORDING
 import com.gustafah.android.mockinterceptor.MockUtils.mockResponse
 import com.gustafah.android.mockinterceptor.MockUtils.processSavedData
 import com.gustafah.android.mockinterceptor.extensions.arrayWithFilterAndArgs
@@ -47,16 +48,20 @@ object MockInterceptor : Interceptor {
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
     fun exportDatabase(context: Context) {
-        val file = context.getDatabasePath(MockInterceptorDatabase.NAME)
-        val uri = FileProvider.getUriForFile(
-            context,
-            "com.gustafah.android.mockinterceptor.provider",
-            file
-        )
-        val sharingIntent = Intent(Intent.ACTION_SEND)
-        sharingIntent.type = "*/*"
-        sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
-        context.startActivity(Intent.createChooser(sharingIntent, "Sharig Mock Database"))
+        val database = context.getDatabasePath(MockInterceptorDatabase.NAME)
+        if (database.exists()) {
+            val uri = FileProvider.getUriForFile(
+                context,
+                "com.gustafah.android.mockinterceptor.provider",
+                database
+            )
+            val sharingIntent = Intent(Intent.ACTION_SEND)
+            sharingIntent.type = "*/*"
+            sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
+            context.startActivity(Intent.createChooser(sharingIntent, "Sharing Mock Database"))
+        } else {
+            MockUtils.createDialog(context, "There is no database saved", "Ok")
+        }
     }
 
     fun importDatabase(context: Context) {
@@ -64,9 +69,16 @@ object MockInterceptor : Interceptor {
     }
 
     fun deleteDatabase(context: Context) {
-        scope.launch {
-            context.getDatabasePath(MockInterceptorDatabase.NAME).delete()
-            MockInterceptorDatabase.getInstance(context).clearAllTables()
+        val database = context.getDatabasePath(MockInterceptorDatabase.NAME)
+        if (database.exists()) {
+            MockUtils.createDialog(
+                context,
+                "Are you sure you want to delete the database?",
+                "Yes",
+                "No"
+            ) { deleteAllDatabase(context) }
+        } else {
+            MockUtils.createDialog(context, "There is no database saved", "Ok")
         }
     }
 
@@ -76,54 +88,103 @@ object MockInterceptor : Interceptor {
         countDownLatch.countDown()
     }
 
+    private fun deleteAllDatabase(context: Context) {
+        scope.launch {
+            val database = context.getDatabasePath(MockInterceptorDatabase.NAME)
+            if (database.exists()) {
+                MockInterceptorDatabase.getInstance(context).clearAllTables()
+                database.delete()
+            }
+        }
+    }
+
     internal fun recreateDatabase(context: Context, file: File) {
         scope.launch {
-            context.getDatabasePath(MockInterceptorDatabase.NAME).delete()
+            deleteAllDatabase(context)
             MockInterceptorDatabase.getInstance(context, file)
         }
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        return if (config.saveMockMode == MockUtils.SAVE_MOCK_MODE_RECORDING) recordMockInfo(chain)
-        else playbackMockInfo(chain)
+        return when (config.saveMockMode) {
+            SAVE_MOCK_MODE_RECORDING -> recordMockInfo(chain)
+            SAVE_MOCK_MODE_PLAYBACK -> playbackMockInfo(chain)
+            else -> readMockFromMockFiles(chain)
+        }
     }
 
-    private fun recordMockInfo(chain: Interceptor.Chain) : Response {
+    private fun recordMockInfo(chain: Interceptor.Chain): Response {
         return kotlin.runCatching {
             chain.proceed(chain.request())
-        }.onSuccess {
-            MockInterceptorDatabase
+        }.onSuccess { mockResponse ->
+            val mockDao = MockInterceptorDatabase
                 .getInstance(config.context())
                 .mockDao()
-                .insertMock(MockEntity(
-                    chain.request().url.toUrl().toString(),
-                    it.peekBody(Long.MAX_VALUE).string()
-                ))
+            val url = chain.request().url.toUrl().toString()
+            mockDao.findMock(url)?.let {
+                synchronized(mockFlow) {
+                    displayOptions(
+                        title = "Looks like you already have a mock with this name",
+                        data = Pair(
+                            arrayOf("Keep mock", "Replace mock"),
+                            arrayOf(
+                                "It will keep the mock file from database",
+                                "It will replace the mock file from database"
+                            )
+                        )
+                    )
+                    waitValidation()
+
+                    if (optChoice.get() == 1) {
+                        mockDao.insertMock(
+                            MockEntity(
+                                chain.request().url.toUrl().toString(),
+                                mockResponse.peekBody(Long.MAX_VALUE).string()
+                            )
+                        )
+                    }
+                }
+            } ?: run {
+                mockDao.insertMock(
+                    MockEntity(
+                        chain.request().url.toUrl().toString(),
+                        mockResponse.peekBody(Long.MAX_VALUE).string()
+                    )
+                )
+            }
         }.getOrThrow()
     }
 
-    private fun playbackMockInfo(chain: Interceptor.Chain) : Response {
+    private fun playbackMockInfo(chain: Interceptor.Chain): Response {
+        val request: Request = chain.request()
+        val mockData = MockInterceptorDatabase
+            .getInstance(config.context())
+            .mockDao()
+            .findMock(request.url.toUrl().toString())
+        return mockResponse(
+            if (mockData != null) 200 else 500,
+            mockData?.fileData ?: ERROR_JSON_NOT_FOUND,
+            request
+        )
+    }
+
+    private fun readMockFromMockFiles(chain: Interceptor.Chain): Response {
         val request: Request = chain.request()
         val mockContent = config.fetchFileNameFromUrl(request)
         mockContent.let {
-            val size = it.names()?.length() ?: 0
-            return when {
-                config.saveMockMode == SAVE_MOCK_MODE_PLAYBACK -> makeMockResponseFromDatabase(
-                    fileName = request.url.toUrl().toString(),
-                    request = request
-                )
-                size == 0 -> mockResponse(
+            return when (it.names()?.length() ?: 0) {
+                0 -> mockResponse(
                     code = 502,
                     jsonResponse = it.toString(),
                     request = request
                 )
-                size == 1 -> makeMockResponse(
-                    JSONObject(
-                        it.getString(
-                            it.names()?.getString(0)!!
-                        )
-                    ), request
-                )
+                1 -> {
+                    val json = JSONObject(it.getString(it.names()?.getString(0)!!))
+                    if (json.has("type"))
+                        mockResponse(code = 502, jsonResponse = json.toString(), request = request)
+                    else
+                        makeMockResponse(json, request)
+                }
                 else -> makeMultiMockResponse(it, request)
             }
         }
@@ -149,14 +210,6 @@ object MockInterceptor : Interceptor {
                 request
             )
         }
-    }
-
-    private fun makeMockResponseFromDatabase(fileName: String, request: Request): Response {
-        val mockData = MockInterceptorDatabase
-            .getInstance(config.context())
-            .mockDao()
-            .findMock(fileName) ?: throw NullPointerException(ERROR_JSON_NOT_FOUND)
-        return mockResponse(200, mockData.fileData, request)
     }
 
     private fun makeMockResponse(content: JSONObject, request: Request): Response {

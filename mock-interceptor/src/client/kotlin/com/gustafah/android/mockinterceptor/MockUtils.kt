@@ -3,6 +3,9 @@ package com.gustafah.android.mockinterceptor
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.appcompat.app.AlertDialog
+import com.gustafah.android.mockinterceptor.persistence.MockInterceptorDatabase
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Protocol
 import okhttp3.Request
@@ -49,6 +52,19 @@ object MockUtils {
         get() {
             return getPrefs(DEFAULT_MOCK_KEY, false)
         }
+
+    internal fun createDialog(
+        context: Context,
+        title: String,
+        positive: String? = null,
+        negative: String? = null,
+        onClick: (() -> Unit)? = null
+    ) {
+        val alertDialog = AlertDialog.Builder(context).setMessage(title)
+        positive?.let { alertDialog.setPositiveButton(positive) { _, _ -> onClick?.invoke() } }
+        negative?.let { alertDialog.setNegativeButton(negative) { _, _ -> } }
+        alertDialog.show()
+    }
 
     internal fun processSavedData(
         context: Context,

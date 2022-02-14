@@ -11,7 +11,7 @@ class SampleRepository(private val service: SampleApi) {
         if (response.isSuccessful) {
             emit(Response.Success(data = response.body()))
         } else {
-            emit(Response.Error(exception = Exception("Fail to fetch Response")))
+            emit(Response.Error(exception = Exception(response.errorBody()?.string() ?: "Fail to fetch Response")))
         }
     }
 
@@ -20,7 +20,7 @@ class SampleRepository(private val service: SampleApi) {
         if (response.isSuccessful) {
             emit(Response.Success(data = response.body()))
         } else {
-            emit(Response.Error(exception = Exception("Fail to fetch Response")))
+            emit(Response.Error(exception = Exception(response.errorBody()?.string() ?: "Fail to fetch Response")))
         }
     }
 
@@ -29,7 +29,16 @@ class SampleRepository(private val service: SampleApi) {
         if (response.isSuccessful) {
             emit(Response.Success(data = response.body()))
         } else {
-            emit(Response.Error(exception = Exception("Fail to fetch Response")))
+            emit(Response.Error(exception = Exception(response.errorBody()?.string() ?: "Fail to fetch Response")))
+        }
+    }
+
+    fun fetchResponse4() = liveData {
+        val response = service.fetchNoMockNoFile()
+        if (response.isSuccessful) {
+            emit(Response.Success(data = response.body()))
+        } else {
+            emit(Response.Error(exception = Exception(response.errorBody()?.string() ?: "Fail to fetch Response")))
         }
     }
 
