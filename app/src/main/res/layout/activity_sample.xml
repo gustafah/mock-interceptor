@@ -3,34 +3,122 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="16dp"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button_sample1"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Mocked With Annotation"
+        android:text="Mock Configuration"
+        android:textColor="@color/white"
+        android:textSize="20sp"
         tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/button_sample2"
+    <RadioGroup
+        android:id="@+id/radio_group"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Mocked Without Annotation"
-        tools:ignore="HardcodedText" />
+        android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/button_sample3"
+        android:id="@+id/button_save_db"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Multi Mocked"
+        android:text="Save"
         tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/button_sample4"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="8dp"
+        android:alpha=".5"
+        android:background="@color/white" />
+
+    <LinearLayout
+        android:id="@+id/linear_database"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Launch Notification"
-        tools:ignore="HardcodedText" />
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Responses from Database"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_fetch_response"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fetch Response from API"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_export_database"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Export Database"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_import_database"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Import Database"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_delete_database"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete Database"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_mock_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Responses from Mock File"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_sample1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mocked With Annotation"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_sample2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mocked Without Annotation"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_sample3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Multi Mocked"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/button_sample4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Launch Notification"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
 
 </LinearLayout>

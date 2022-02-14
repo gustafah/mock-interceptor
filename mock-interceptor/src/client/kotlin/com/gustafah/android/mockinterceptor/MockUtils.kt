@@ -16,6 +16,10 @@ object MockUtils {
     internal const val BUNDLE_FIELD_TEXT = "saved_data_text"
     internal const val BUNDLE_FIELD_SUBTEXT = "saved_data_subtext"
 
+    const val SAVE_MOCK_MODE_NONE = -1
+    const val SAVE_MOCK_MODE_RECORDING = 0
+    const val SAVE_MOCK_MODE_PLAYBACK = 1
+
     internal const val JSON_FIELD_REFERENCE = "reference"
     internal const val JSON_FIELD_SAVED_DATA = "saved_data"
     internal const val JSON_FIELD_DEFAULT = "default"

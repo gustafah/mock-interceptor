@@ -4,6 +4,7 @@ import android.content.Context
 import android.preference.PreferenceManager
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode
 import com.gustafah.android.mockinterceptor.MockUtils.ERROR_JSON_NOT_FOUND
+import com.gustafah.android.mockinterceptor.MockUtils.SAVE_MOCK_MODE_NONE
 import com.gustafah.android.mockinterceptor.MockUtils.prefs
 import okhttp3.Request
 import org.json.JSONObject
@@ -29,6 +30,7 @@ class MockConfig private constructor(builder: Builder) {
     private val assetsPrefix: String
     private val assetsSuffix: String
     private val assetsSeparator: String
+    val saveMockMode: Int
     val selectorMode: OptionsSelectorMode
     val context: () -> Context
     var requestArguments = emptyList<String>()
@@ -42,6 +44,7 @@ class MockConfig private constructor(builder: Builder) {
         assetsSuffix = builder.assetsSuffix
         assetsSeparator = builder.assetsSeparator
         selectorMode = builder.selectorMode
+        saveMockMode = builder.saveMockMode
         context =
             builder.context ?: throw (InvalidParameterException("No Context"))
         prefs = PreferenceManager.getDefaultSharedPreferences(context())
@@ -79,7 +82,7 @@ class MockConfig private constructor(builder: Builder) {
         }
     }
 
-    private fun getFileFromMockAnnotation(request: Request) =
+    fun getFileFromMockAnnotation(request: Request) =
         request.tag(Invocation::class.java)?.method()?.getAnnotation(Mock::class.java)?.let {
             when {
                 it.path.isNotEmpty() -> arrayOf(it.path)
@@ -121,6 +124,8 @@ class MockConfig private constructor(builder: Builder) {
             private set
         internal var assetsSeparator: String = ""
             private set
+        internal var saveMockMode: Int = SAVE_MOCK_MODE_NONE
+            private set
         internal var context: (() -> Context)? = null
             private set
         internal var selectorMode: OptionsSelectorMode = OptionsSelectorMode.ALWAYS_ON_TOP
@@ -131,6 +136,7 @@ class MockConfig private constructor(builder: Builder) {
         fun separator(separator: String) = apply { this.assetsSeparator = separator }
         fun context(context: () -> Context) = apply { this.context = context }
         fun selectorMode(mode: OptionsSelectorMode) = apply { this.selectorMode = mode }
+        fun saveMockMode(saveMock: Int) = apply { this.saveMockMode = saveMock }
         fun build() = MockConfig(this)
     }
 
