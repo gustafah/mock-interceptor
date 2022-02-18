@@ -16,6 +16,9 @@
         <activity
             android:name="com.gustafah.android.mockinterceptor.ui.MockImportDatabaseActivity"
             android:exported="false" />
+        <activity
+            android:name="com.gustafah.android.mockinterceptor.ui.MockExportDatabaseActivity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

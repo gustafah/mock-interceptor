@@ -1,15 +1,15 @@
 package com.gustafah.android.mockinterceptor.ui
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.OpenableColumns
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.gustafah.android.mockinterceptor.MockInterceptor
-import java.io.*
+import com.gustafah.android.mockinterceptor.MockFileUtils.writeFileContent
+import com.gustafah.android.mockinterceptor.MockUtils.ERROR_FILE_NOT_FOUND
+import com.gustafah.android.mockinterceptor.R
+import java.io.File
 
 class MockImportDatabaseActivity : Activity() {
 
@@ -18,7 +18,7 @@ class MockImportDatabaseActivity : Activity() {
         val data = Intent(Intent.ACTION_OPEN_DOCUMENT)
         data.type = "*/*"
         startActivityForResult(
-            Intent.createChooser(data, "Choose file to import"),
+            Intent.createChooser(data, getString(R.string.mock_file_chooser_import_yes)),
             3455
         )
     }
@@ -28,54 +28,20 @@ class MockImportDatabaseActivity : Activity() {
         if (requestCode == 3455) {
             if (resultCode == AppCompatActivity.RESULT_OK) {
                 if (data != null && data.data != null) {
-                    val file = File(writeFileContent(data.data!!) ?: "")
+                    val file = File(
+                        writeFileContent(
+                            data.data!!,
+                            getExternalFilesDir(null),
+                            contentResolver
+                        ) ?: ""
+                    )
                     MockInterceptor.recreateDatabase(this, file)
                 } else {
-                    Log.d(MockImportDatabaseActivity::class.simpleName, "File uri not found {}")
+                    Log.e(MockImportDatabaseActivity::class.simpleName, ERROR_FILE_NOT_FOUND)
                 }
-                finish()
             }
         }
-    }
-
-    @Throws(IOException::class)
-    private fun writeFileContent(uri: Uri): String? {
-        val selectedFileInputStream: InputStream? = contentResolver.openInputStream(uri)
-        if (selectedFileInputStream != null) {
-            val certCacheDir = File(getExternalFilesDir(null), "Mock Interceptor")
-            var isCertCacheDirExists = certCacheDir.exists()
-            if (!isCertCacheDirExists) {
-                isCertCacheDirExists = certCacheDir.mkdirs()
-            }
-            if (isCertCacheDirExists) {
-                val filePath = certCacheDir.absolutePath + "/" + getFileDisplayName(uri)
-                val selectedFileOutPutStream: OutputStream = FileOutputStream(filePath)
-                val buffer = ByteArray(Long.SIZE_BYTES)
-                var length: Int
-                while (selectedFileInputStream.read(buffer).also { length = it } > 0) {
-                    selectedFileOutPutStream.write(buffer, 0, length)
-                }
-                selectedFileOutPutStream.flush()
-                selectedFileOutPutStream.close()
-                return filePath
-            }
-            selectedFileInputStream.close()
-        }
-        return null
-    }
-
-    @SuppressLint("Range")
-    private fun getFileDisplayName(uri: Uri): String? {
-        var displayName: String? = null
-        contentResolver
-            .query(uri, null, null, null, null, null).use { cursor ->
-                if (cursor != null && cursor.moveToFirst()) {
-                    displayName = cursor.getString(
-                        cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    )
-                }
-            }
-        return displayName
+        finish()
     }
 
 }

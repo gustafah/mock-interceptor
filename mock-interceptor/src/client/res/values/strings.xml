@@ -6,4 +6,27 @@
     <string name="mock_notification_select_message">User selects responses…</string>
     <string name="mock_notification_button_enable_mock">Manual</string>
     <string name="mock_notification_button_disable_mock">Automatic</string>
+
+    <!-- Mock General File Chooser -->
+    <string name="mock_file_chooser_import_yes">Choose file to import</string>
+    <!-- Mock General Alert -->
+    <string name="mock_alert_button_yes">Yes</string>
+    <string name="mock_alert_button_no">No</string>
+    <string name="mock_alert_button_ok">OK</string>
+    <!-- Mock Save Database Alert -->
+    <string name="mock_save_database_title">How do you want to export your database?</string>
+    <string name="mock_save_database_option_db_file">DB File</string>
+    <string name="mock_save_database_option_db_file_description">It will export all your database in a single .db file"</string>
+    <string name="mock_save_database_option_json_file">Json File</string>
+    <string name="mock_save_database_option_json_file_description">It will export all your database in .json files</string>
+    <!-- Mock Already Saved Alert -->
+    <string name="mock_already_saved_title">Looks like you already have a mock with this name</string>
+    <string name="mock_already_saved_option_keep_mock">Keep Mock</string>
+    <string name="mock_already_saved_option_keep_mock_description">It will keep the mock file from database</string>
+    <string name="mock_already_saved_option_replace_mock">Replace Mock</string>
+    <string name="mock_already_saved_option_replace_mock_description">It will replace the mock file from database</string>
+    <!-- Delete Database Alert -->
+    <string name="mock_delete_database_title">Are you sure you want to delete the database?</string>
+    <string name="mock_delete_database_error">There is no database saved</string>
+
 </resources>

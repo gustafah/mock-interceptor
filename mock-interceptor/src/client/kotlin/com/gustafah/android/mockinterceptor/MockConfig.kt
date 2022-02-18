@@ -4,7 +4,6 @@ import android.content.Context
 import android.preference.PreferenceManager
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode
 import com.gustafah.android.mockinterceptor.MockUtils.ERROR_JSON_NOT_FOUND
-import com.gustafah.android.mockinterceptor.MockUtils.SAVE_MOCK_MODE_NONE
 import com.gustafah.android.mockinterceptor.MockUtils.prefs
 import okhttp3.Request
 import org.json.JSONObject
@@ -30,7 +29,7 @@ class MockConfig private constructor(builder: Builder) {
     private val assetsPrefix: String
     private val assetsSuffix: String
     private val assetsSeparator: String
-    val saveMockMode: Int
+    val saveMockMode: OptionRecordMock
     val selectorMode: OptionsSelectorMode
     val context: () -> Context
     var requestArguments = emptyList<String>()
@@ -124,7 +123,7 @@ class MockConfig private constructor(builder: Builder) {
             private set
         internal var assetsSeparator: String = ""
             private set
-        internal var saveMockMode: Int = SAVE_MOCK_MODE_NONE
+        internal var saveMockMode: OptionRecordMock = OptionRecordMock.DISABLED
             private set
         internal var context: (() -> Context)? = null
             private set
@@ -136,7 +135,7 @@ class MockConfig private constructor(builder: Builder) {
         fun separator(separator: String) = apply { this.assetsSeparator = separator }
         fun context(context: () -> Context) = apply { this.context = context }
         fun selectorMode(mode: OptionsSelectorMode) = apply { this.selectorMode = mode }
-        fun saveMockMode(saveMock: Int) = apply { this.saveMockMode = saveMock }
+        fun saveMockMode(saveMock: OptionRecordMock) = apply { this.saveMockMode = saveMock }
         fun build() = MockConfig(this)
     }
 
@@ -151,5 +150,17 @@ class MockConfig private constructor(builder: Builder) {
         ALWAYS_ON_TOP,
         STANDARD,
         NO_SELECTION
+    }
+
+    /**
+     * Determines if it should store the api response or return the mock from asset or database
+     * OptionRecordMock.DISABLED will return the mock file from asset
+     * OptionRecordMock.RECORD will call the API and save its response in the database
+     * OptionRecordMock.PLAYBACK will return the mock file from database
+     */
+    enum class OptionRecordMock {
+        DISABLED,
+        RECORD,
+        PLAYBACK
     }
 }

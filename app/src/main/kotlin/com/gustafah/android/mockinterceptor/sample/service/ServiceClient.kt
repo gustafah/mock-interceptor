@@ -8,7 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun serviceClient(context: Context, saveMockMode: Int): SampleApi {
+fun serviceClient(context: Context, saveMockMode: MockConfig.OptionRecordMock): SampleApi {
     val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
     val client = OkHttpClient.Builder()
         .addInterceptor(logging)

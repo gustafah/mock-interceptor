@@ -10,8 +10,8 @@ import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.gustafah.android.mockinterceptor.MockConfig
 import com.gustafah.android.mockinterceptor.MockInterceptor
-import com.gustafah.android.mockinterceptor.MockUtils
 import com.gustafah.android.mockinterceptor.notification.MockNotification
 import com.gustafah.android.mockinterceptor.sample.R
 import com.gustafah.android.mockinterceptor.sample.repository.SampleRepository
@@ -31,16 +31,17 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample),
     private fun setupViews() {
         val saveMockMode = getPreferences(Context.MODE_PRIVATE).getInt(
             "SAVE_MOCK_MODE",
-            MockUtils.SAVE_MOCK_MODE_NONE
+            MockConfig.OptionRecordMock.DISABLED.ordinal
         )
-        val isOnSaveMockMode = saveMockMode != MockUtils.SAVE_MOCK_MODE_NONE
+        val isOnSaveMockMode = saveMockMode != MockConfig.OptionRecordMock.DISABLED.ordinal
+        val mockOption = MockConfig.OptionRecordMock.values()[saveMockMode]
 
-        val repository = SampleRepository(serviceClient(context = this, saveMockMode))
+        val repository = SampleRepository(serviceClient(context = this, mockOption))
         val viewModel = SampleViewModel(repository)
 
-        addOnRadioButton("Response from Mock File", MockUtils.SAVE_MOCK_MODE_NONE, saveMockMode)
-        addOnRadioButton("Record API response and save on Database", MockUtils.SAVE_MOCK_MODE_RECORDING, saveMockMode)
-        addOnRadioButton("Playback API response from Database", MockUtils.SAVE_MOCK_MODE_PLAYBACK, saveMockMode)
+        addOnRadioButton("Response from Mock File", MockConfig.OptionRecordMock.DISABLED.ordinal, saveMockMode)
+        addOnRadioButton("Record API response and save on Database", MockConfig.OptionRecordMock.RECORD.ordinal, saveMockMode)
+        addOnRadioButton("Playback API response from Database", MockConfig.OptionRecordMock.PLAYBACK.ordinal, saveMockMode)
 
         button_save_db.setOnClickListener {
             val checkedView = radio_group.findViewById<View>(radio_group.checkedRadioButtonId)
@@ -76,7 +77,7 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample),
 
     private fun setupMocksFromDatabase(viewModel: SampleViewModel, saveMockMode: Int) {
         button_fetch_response.text =
-            if (saveMockMode == MockUtils.SAVE_MOCK_MODE_RECORDING) "Fetch Response from API"
+            if (saveMockMode == MockConfig.OptionRecordMock.RECORD.ordinal) "Fetch Response from API"
             else "Fetch Response from Database"
         button_fetch_response.setOnClickListener {
             viewModel.fetchResponse()

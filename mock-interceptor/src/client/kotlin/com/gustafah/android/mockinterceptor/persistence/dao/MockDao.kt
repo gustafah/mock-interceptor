@@ -15,4 +15,7 @@ interface MockDao {
     @Query("SELECT * FROM mockentity WHERE file_name = :fileName")
     fun findMock(fileName: String) : MockEntity?
 
+    @Query("SELECT * FROM mockentity")
+    fun getAllMocks() : List<MockEntity>?
+
 }
