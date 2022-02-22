@@ -325,7 +325,11 @@ object MockInterceptor : Interceptor {
 
     private fun deleteAllDatabase(context: Context) =
         scope.launch {
-            MockInterceptorDatabase.getInstance(context).clearAllTables()
+            kotlin.runCatching {
+                MockInterceptorDatabase.getInstance(context).clearAllTables()
+                val database = context.getDatabasePath(MockInterceptorDatabase.NAME)
+                if (database.exists()) database.delete()
+            }
         }
 
     private fun waitValidation() {
