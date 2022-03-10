@@ -1,6 +1,5 @@
 package com.gustafah.android.mockinterceptor.ui
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +10,7 @@ import com.gustafah.android.mockinterceptor.MockUtils.ERROR_FILE_NOT_FOUND
 import com.gustafah.android.mockinterceptor.R
 import java.io.File
 
-class MockImportDatabaseActivity : Activity() {
+class MockImportDatabaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +34,7 @@ class MockImportDatabaseActivity : Activity() {
                             contentResolver
                         ) ?: ""
                     )
-                    MockInterceptor.recreateDatabase(this, file)
+                    MockInterceptor.recreateDatabase(file)
                 } else {
                     Log.e(MockImportDatabaseActivity::class.simpleName, ERROR_FILE_NOT_FOUND)
                 }
