@@ -16,11 +16,11 @@ object MockUtils {
     internal const val BUNDLE_FIELD_TEXT = "saved_data_text"
     internal const val BUNDLE_FIELD_SUBTEXT = "saved_data_subtext"
 
+    internal const val JSON_FIELD_MULTI = "multi_files"
     internal const val JSON_FIELD_REFERENCE = "reference"
     internal const val JSON_FIELD_SAVED_DATA = "saved_data"
     internal const val JSON_FIELD_DEFAULT = "default"
     internal const val JSON_FIELD_DESCRIPTION = "description"
-    internal const val JSON_FIELD_EXTERNAL_LIST = "external_list"
     internal const val JSON_FIELD_CODE = "code"
     internal const val JSON_FIELD_FILTER = "filter"
     internal const val JSON_FIELD_DATA = "data"
@@ -29,8 +29,7 @@ object MockUtils {
     internal const val JSON_FIELD_IS_UNIT = "is_unit"
 
     internal const val ERROR_JSON_NOT_FOUND =
-        "{\"type\": \"SERVICE_UNAVAILABLE\",\"message\": \"Couldn't find a mock for this request. " +
-                "(suggestion: %s\", \"filter\": {\"data\": [\"%s\"]}})"
+        "{\"$JSON_FIELD_REFERENCE\": \"%s not found\", \"type\": \"MOCK_UNAVAILABLE\",\"message\": \"Couldn't find a mock for this request. \"}"
     internal const val ERROR_JSON_NO_DATA =
         "{\"type\": \"UNKNOWN_ERROR\", \"message\": \"No mocked data.\"}"
 

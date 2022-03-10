@@ -5,6 +5,10 @@ import android.preference.PreferenceManager
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode
 import com.gustafah.android.mockinterceptor.MockUtils.ERROR_JSON_NOT_FOUND
 import com.gustafah.android.mockinterceptor.MockUtils.prefs
+import com.gustafah.android.mockinterceptor.processors.AnnotationFileProcessor
+import com.gustafah.android.mockinterceptor.processors.FileProcessor
+import com.gustafah.android.mockinterceptor.processors.UrlFileProcessor
+import com.gustafah.android.mockinterceptor.processors.UrlFilteredFileProcessor
 import okhttp3.Request
 import org.json.JSONObject
 import retrofit2.Invocation
@@ -26,13 +30,16 @@ import java.security.InvalidParameterException
  *@throws InvalidParameterException when no Context is provided
  */
 class MockConfig private constructor(builder: Builder) {
-    private val assetsPrefix: String
-    private val assetsSuffix: String
-    private val assetsSeparator: String
+
+    internal val assetsPrefix: String
+    internal val assetsSuffix: String
+    internal val assetsSeparator: String
+    internal var requestArguments = emptyList<String>()
+        private set
     val selectorMode: OptionsSelectorMode
     val context: () -> Context
-    var requestArguments = emptyList<String>()
-        private set
+
+    private val processors : List<FileProcessor>
 
     /**
      * Get the information from the Builder
@@ -45,48 +52,23 @@ class MockConfig private constructor(builder: Builder) {
         context =
             builder.context ?: throw (InvalidParameterException("No Context"))
         prefs = PreferenceManager.getDefaultSharedPreferences(context())
+
+        processors = listOf(
+            AnnotationFileProcessor(),
+            UrlFileProcessor(),
+            UrlFilteredFileProcessor()
+        )
     }
 
-    /**
-     * For getting the content of a Mock file from a okhttp3.Request object
-     * @param request from okhttp3.Request
-     * @return [getContent]
-     */
-    fun fetchFileNameFromUrl(request: Request): JSONObject {
-        val postfix = "$assetsSeparator${request.method}$assetsSuffix"
-        val segments = request.url.pathSegments
+    fun fetchMockContentFromRequest(request: Request): JSONObject? {
         requestArguments = getArguments(request)
-        val fileName = getFileFromMockAnnotation(request) ?: kotlin.run {
-            arrayOf(segments.filter {
-                requestArguments.contains(it).not()
-            }.joinToString(assetsSeparator, assetsPrefix, postfix))
+        processors.forEach {
+            val content = it.process(this, request)
+            if(content != null)
+                return content
         }
-        return JSONObject().apply {
-            fileName.forEach {
-                put(it, JSONObject(
-                        MockParser.getContentFromAsset(context(), it) ?: String.format(
-                            ERROR_JSON_NOT_FOUND,
-                            it,
-                            if (requestArguments.isNotEmpty()) {
-                                requestArguments.joinToString(separator = "\", \"")
-                            } else {
-                                ""
-                            }
-                        )
-                    )
-                )
-            }
-        }
+        return null
     }
-
-    private fun getFileFromMockAnnotation(request: Request) =
-        request.tag(Invocation::class.java)?.method()?.getAnnotation(Mock::class.java)?.let {
-            when {
-                it.path.isNotEmpty() -> arrayOf(it.path)
-                it.files.isNotEmpty() -> it.files
-                else -> arrayOf()
-            }
-        }
 
     private fun getArguments(request: Request): List<String> {
         val pathParams = request.tags()?.values?.first()?.let {

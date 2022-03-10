@@ -23,18 +23,32 @@
         android:id="@+id/button_sample3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Multi Mocked"
+        android:text="Mocked Without Annotation With Param"
         tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/button_sample4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No Mock No File"
+        android:text="Multi Mocked"
         tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/button_sample5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No Mock No File"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/button_sample6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Multi Mocks - File Not Found"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/button_sample7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Launch Notification"

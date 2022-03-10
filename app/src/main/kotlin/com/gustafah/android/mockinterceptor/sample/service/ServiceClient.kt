@@ -19,7 +19,6 @@ fun serviceClient(context: Context): SampleApi {
                 config = MockConfig.Builder()
                     .suffix(".json") //optional
                     .separator("_") //optional
-                    .prefix("mock/") //optional
                     .context { context } //mandatory
                     .selectorMode(MockConfig.OptionsSelectorMode.STANDARD) //recommended
                     .build()
