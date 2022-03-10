@@ -17,7 +17,6 @@ fun serviceClient(context: Context, saveMockMode: MockConfig.OptionRecordMock): 
                 config = MockConfig.Builder()
                     .suffix(".json") //optional
                     .separator("_") //optional
-                    .prefix("mock/") //optional
                     .saveMockMode(saveMockMode) //optional
                     .context { context } //mandatory
                     .selectorMode(MockConfig.OptionsSelectorMode.STANDARD) //recommended

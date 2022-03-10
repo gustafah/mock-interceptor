@@ -20,8 +20,7 @@ import com.gustafah.android.mockinterceptor.sample.ui.viewmodel.SampleViewModel
 import kotlinx.android.synthetic.main.activity_sample.*
 
 
-class SampleActivity : AppCompatActivity(R.layout.activity_sample),
-    DialogInterface.OnDismissListener {
+class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +79,7 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample),
             if (saveMockMode == MockConfig.OptionRecordMock.RECORD.ordinal) "Fetch Response from API"
             else "Fetch Response from Database"
         button_fetch_response.setOnClickListener {
-            viewModel.fetchResponse()
+            viewModel.fetchResponseMock()
         }
         button_export_database.setOnClickListener {
             MockInterceptor.exportDatabase(this)
@@ -143,7 +142,5 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample),
             .show()
 
     }
-
-    override fun onDismiss(p0: DialogInterface?) {}
 
 }
