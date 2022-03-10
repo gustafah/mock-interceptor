@@ -30,12 +30,11 @@ import java.security.InvalidParameterException
  *@throws InvalidParameterException when no Context is provided
  */
 class MockConfig private constructor(builder: Builder) {
-
-    internal val assetsPrefix: String
-    internal val assetsSuffix: String
-    internal val assetsSeparator: String
+    private val assetsPrefix: String
+    private val assetsSuffix: String
+    private val assetsSeparator: String
     internal var requestArguments = emptyList<String>()
-        private set
+    private setval saveMockMode: OptionRecordMock
     val selectorMode: OptionsSelectorMode
     val context: () -> Context
 
@@ -49,6 +48,7 @@ class MockConfig private constructor(builder: Builder) {
         assetsSuffix = builder.assetsSuffix
         assetsSeparator = builder.assetsSeparator
         selectorMode = builder.selectorMode
+        saveMockMode = builder.saveMockMode
         context =
             builder.context ?: throw (InvalidParameterException("No Context"))
         prefs = PreferenceManager.getDefaultSharedPreferences(context())
@@ -103,6 +103,8 @@ class MockConfig private constructor(builder: Builder) {
             private set
         internal var assetsSeparator: String = ""
             private set
+        internal var saveMockMode: OptionRecordMock = OptionRecordMock.DISABLED
+            private set
         internal var context: (() -> Context)? = null
             private set
         internal var selectorMode: OptionsSelectorMode = OptionsSelectorMode.ALWAYS_ON_TOP
@@ -113,6 +115,7 @@ class MockConfig private constructor(builder: Builder) {
         fun separator(separator: String) = apply { this.assetsSeparator = separator }
         fun context(context: () -> Context) = apply { this.context = context }
         fun selectorMode(mode: OptionsSelectorMode) = apply { this.selectorMode = mode }
+        fun saveMockMode(saveMock: OptionRecordMock) = apply { this.saveMockMode = saveMock }
         fun build() = MockConfig(this)
     }
 
@@ -127,5 +130,17 @@ class MockConfig private constructor(builder: Builder) {
         ALWAYS_ON_TOP,
         STANDARD,
         NO_SELECTION
+    }
+
+    /**
+     * Determines if it should store the api response or return the mock from asset or database
+     * OptionRecordMock.DISABLED will return the mock file from asset
+     * OptionRecordMock.RECORD will call the API and save its response in the database
+     * OptionRecordMock.PLAYBACK will return the mock file from database
+     */
+    enum class OptionRecordMock {
+        DISABLED,
+        RECORD,
+        PLAYBACK
     }
 }

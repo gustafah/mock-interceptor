@@ -13,6 +13,24 @@
             android:name="com.gustafah.android.mockinterceptor.ui.MockReferenceActivity"
             android:exported="false"
             android:theme="@style/mock_MainTheme" />
+        <activity
+            android:name="com.gustafah.android.mockinterceptor.ui.MockImportDatabaseActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.gustafah.android.mockinterceptor.ui.MockExportDatabaseActivity"
+            android:exported="false" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.gustafah.android.mockinterceptor.provider"
+            android:exported="false"
+            android:enabled="true"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
     </application>
 
 </manifest>
