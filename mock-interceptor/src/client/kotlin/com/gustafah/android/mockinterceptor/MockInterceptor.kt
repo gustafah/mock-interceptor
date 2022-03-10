@@ -3,7 +3,6 @@ package com.gustafah.android.mockinterceptor
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode.NO_SELECTION
 import com.gustafah.android.mockinterceptor.MockFileUtils.FILE_EXTENSION_DB
 import com.gustafah.android.mockinterceptor.MockFileUtils.FILE_EXTENSION_JSON
@@ -15,10 +14,9 @@ import com.gustafah.android.mockinterceptor.MockFileUtils.unzipFileAtPath
 import com.gustafah.android.mockinterceptor.MockFileUtils.writeToFile
 import com.gustafah.android.mockinterceptor.MockFileUtils.zipFileAtPath
 import com.gustafah.android.mockinterceptor.MockUtils.ERROR_JSON_NOT_FOUND
-import com.gustafah.android.mockinterceptor.MockUtils.JSON_FIELD_REFERENCE
 import com.gustafah.android.mockinterceptor.MockUtils.JSON_FIELD_MULTI
+import com.gustafah.android.mockinterceptor.MockUtils.JSON_FIELD_REFERENCE
 import com.gustafah.android.mockinterceptor.MockUtils.JSON_FIELD_SAVED_DATA
-import com.gustafah.android.mockinterceptor.MockUtils.RESPONSE_CODE_BAD_GATEWAY
 import com.gustafah.android.mockinterceptor.MockUtils.RESPONSE_CODE_INTERNAL_ERROR
 import com.gustafah.android.mockinterceptor.MockUtils.RESPONSE_CODE_SUCCESS
 import com.gustafah.android.mockinterceptor.MockUtils.mockResponse
@@ -30,12 +28,7 @@ import com.gustafah.android.mockinterceptor.extensions.isNotEmpty
 import com.gustafah.android.mockinterceptor.extensions.mapData
 import com.gustafah.android.mockinterceptor.persistence.MockInterceptorDatabase
 import com.gustafah.android.mockinterceptor.persistence.entities.MockEntity
-import com.gustafah.android.mockinterceptor.ui.MockExportDatabaseActivity
-import com.gustafah.android.mockinterceptor.ui.MockImportDatabaseActivity
-import com.gustafah.android.mockinterceptor.ui.MockOptionsActivity
-import com.gustafah.android.mockinterceptor.ui.MockOptionsDialog
-import com.gustafah.android.mockinterceptor.ui.MockReferenceActivity
-import com.gustafah.android.mockinterceptor.ui.MockReferenceDialog
+import com.gustafah.android.mockinterceptor.ui.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -213,7 +206,11 @@ object MockInterceptor : Interceptor {
                 else
                     pickMockResponse(it, request)
             }
-        } ?: mockResponse(code = 502, jsonResponse = MockUtils.ERROR_JSON_NO_DATA, request = request)
+        } ?: mockResponse(
+            code = 502,
+            jsonResponse = MockUtils.ERROR_JSON_NO_DATA,
+            request = request
+        )
     }
 
     private fun pickMultiMockResponse(content: JSONObject, request: Request): Response {

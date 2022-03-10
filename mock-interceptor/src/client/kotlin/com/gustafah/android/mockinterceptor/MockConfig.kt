@@ -3,7 +3,6 @@ package com.gustafah.android.mockinterceptor
 import android.content.Context
 import android.preference.PreferenceManager
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode
-import com.gustafah.android.mockinterceptor.MockUtils.ERROR_JSON_NOT_FOUND
 import com.gustafah.android.mockinterceptor.MockUtils.prefs
 import com.gustafah.android.mockinterceptor.processors.AnnotationFileProcessor
 import com.gustafah.android.mockinterceptor.processors.FileProcessor
@@ -30,15 +29,16 @@ import java.security.InvalidParameterException
  *@throws InvalidParameterException when no Context is provided
  */
 class MockConfig private constructor(builder: Builder) {
-    private val assetsPrefix: String
-    private val assetsSuffix: String
-    private val assetsSeparator: String
+    internal val assetsPrefix: String
+    internal val assetsSuffix: String
+    internal val assetsSeparator: String
     internal var requestArguments = emptyList<String>()
-    private setval saveMockMode: OptionRecordMock
+        private set
+    val saveMockMode: OptionRecordMock
     val selectorMode: OptionsSelectorMode
     val context: () -> Context
 
-    private val processors : List<FileProcessor>
+    private val processors: List<FileProcessor>
 
     /**
      * Get the information from the Builder
@@ -64,7 +64,7 @@ class MockConfig private constructor(builder: Builder) {
         requestArguments = getArguments(request)
         processors.forEach {
             val content = it.process(this, request)
-            if(content != null)
+            if (content != null)
                 return content
         }
         return null
