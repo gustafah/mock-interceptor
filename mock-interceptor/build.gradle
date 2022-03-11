@@ -169,6 +169,6 @@ dependencies {
     implementation dependency_versions.retrofit
     implementation dependency_versions.coroutines
 
-    implementation dependency_versions.room
+    api dependency_versions.room
     kapt dependency_versions.roomProcessor
 }

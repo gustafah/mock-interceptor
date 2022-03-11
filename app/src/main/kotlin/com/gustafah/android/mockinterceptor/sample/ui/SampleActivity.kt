@@ -82,13 +82,13 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
             viewModel.fetchResponseMock()
         }
         button_export_database.setOnClickListener {
-            MockInterceptor.exportDatabase(this)
+            MockInterceptor.exportDatabase()
         }
         button_import_database.setOnClickListener {
-            MockInterceptor.importDatabase(this)
+            MockInterceptor.importDatabase()
         }
         button_delete_database.setOnClickListener {
-            MockInterceptor.deleteDatabase(this)
+            MockInterceptor.deleteDatabase()
         }
     }
 
