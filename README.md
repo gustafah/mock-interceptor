@@ -1,4 +1,4 @@
-# mock-interceptor > $mock_version = 1.2.0
+# mock-interceptor > $mock_version = 1.3.0
 
 We've all been there, constantly waiting on APIs that never come, delaying our development.
 
