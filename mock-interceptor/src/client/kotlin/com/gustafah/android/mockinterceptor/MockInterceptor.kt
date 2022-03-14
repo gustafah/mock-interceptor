@@ -151,7 +151,7 @@ object MockInterceptor : Interceptor {
             mockDao.findMock(url)?.let {
                 synchronized(mockFlow) {
                     displayOptions(
-                        title = context.getString(R.string.mock_already_saved_title),
+                        title = context.getString(R.string.mock_already_saved_title, url),
                         data = Pair(
                             arrayOf(
                                 context.getString(R.string.mock_already_saved_option_keep_mock),

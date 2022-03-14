@@ -20,7 +20,7 @@
     <string name="mock_save_database_option_json_file">Json File</string>
     <string name="mock_save_database_option_json_file_description">It will export all your database in .json files</string>
     <!-- Mock Already Saved Alert -->
-    <string name="mock_already_saved_title">Looks like you already have a mock with this name</string>
+    <string name="mock_already_saved_title">Looks like you already have a mock for the endpoint: %1$s</string>
     <string name="mock_already_saved_option_keep_mock">Keep Mock</string>
     <string name="mock_already_saved_option_keep_mock_description">It will keep the mock file from database</string>
     <string name="mock_already_saved_option_replace_mock">Replace Mock</string>
