@@ -39,7 +39,7 @@ class MockReferenceDialog : DialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         MockInterceptor.release(selectedReference)
-        (activity as DialogInterface.OnDismissListener).onDismiss(dialog)
+        (activity as? DialogInterface.OnDismissListener)?.onDismiss(dialog)
     }
 
     private fun createDialog(title: Array<String>) {

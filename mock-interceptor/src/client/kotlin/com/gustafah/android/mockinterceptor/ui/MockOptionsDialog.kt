@@ -43,7 +43,7 @@ class MockOptionsDialog : DialogFragment() {
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         MockInterceptor.release(selectedMock)
-        (activity as DialogInterface.OnDismissListener).onDismiss(dialog)
+        (activity as? DialogInterface.OnDismissListener)?.onDismiss(dialog)
     }
 
     private fun createDialog(title: String, text: Array<String>, subtext: Array<String>) {

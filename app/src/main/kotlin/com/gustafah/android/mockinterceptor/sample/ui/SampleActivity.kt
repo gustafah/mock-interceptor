@@ -20,18 +20,24 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
         val repository = SampleRepository(serviceClient(context = this))
         val viewModel = SampleViewModel(repository)
         button_sample1.setOnClickListener {
-            viewModel.fetchResponse()
+            viewModel.fetchResponseMock()
         }
         button_sample2.setOnClickListener {
-            viewModel.fetchResponse2()
+            viewModel.fetchResponseNoMock()
         }
         button_sample3.setOnClickListener {
-            viewModel.fetchResponse3()
+            viewModel.fetchResponseNoMockWithParams()
         }
         button_sample4.setOnClickListener {
-            viewModel.fetchResponse4()
+            viewModel.fetchResponseMultiMock()
         }
         button_sample5.setOnClickListener {
+            viewModel.fetchResponseNoMockNoFile()
+        }
+        button_sample6.setOnClickListener {
+            viewModel.fetchResponseMultiMockNoFile()
+        }
+        button_sample7.setOnClickListener {
             MockNotification.showMockNotification(this)
         }
         viewModel.responseLiveData.observe(this) {

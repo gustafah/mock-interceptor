@@ -12,20 +12,28 @@ class SampleViewModel(private val repository: SampleRepository) {
     val responseLiveData: LiveData<List<FetchResponse>>
         get() = _responseLiveData
 
-    fun fetchResponse() {
-        sendToLiveData(repository.fetchResponse())
+    fun fetchResponseMock() {
+        sendToLiveData(repository.fetchResponseMock())
     }
 
-    fun fetchResponse2() {
-        sendToLiveData(repository.fetchResponse2())
+    fun fetchResponseNoMock() {
+        sendToLiveData(repository.fetchResponseNoMock())
     }
 
-    fun fetchResponse3() {
-        sendToLiveData(repository.fetchResponse3())
+    fun fetchResponseNoMockWithParams() {
+        sendToLiveData(repository.fetchResponseNoMockWithParams())
     }
 
-    fun fetchResponse4() {
-        sendToLiveData(repository.fetchResponse4())
+    fun fetchResponseMultiMock() {
+        sendToLiveData(repository.fetchResponseMultiMock())
+    }
+
+    fun fetchResponseNoMockNoFile() {
+        sendToLiveData(repository.fetchResponseNoMockNoFile())
+    }
+
+    fun fetchResponseMultiMockNoFile() {
+        sendToLiveData(repository.fetchResponseMultiMockNoFile())
     }
 
     private fun sendToLiveData(response: LiveData<Response<List<FetchResponse>?>>) =
