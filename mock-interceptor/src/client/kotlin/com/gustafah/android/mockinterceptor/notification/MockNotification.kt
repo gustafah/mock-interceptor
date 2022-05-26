@@ -1,6 +1,5 @@
 package com.gustafah.android.mockinterceptor.notification
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -22,7 +21,12 @@ object MockNotification {
     @RequiresApi(Build.VERSION_CODES.M)
     fun showMockNotification(context: Context) {
         val intent = Intent(context, DefaultMockNotificationReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        )
 
         val collapsedNotification = RemoteViews(
             context.packageName,
