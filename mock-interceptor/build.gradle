@@ -2,20 +2,15 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'maven-publish'
-    id 'signing'
 }
 
 android {
-
     compileSdkVersion application.compileSdk
     buildToolsVersion application.buildTools
 
     defaultConfig {
         minSdkVersion application.minSdk
         targetSdkVersion application.targetSdk
-        versionCode application.versionCode
-        versionName application.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -73,93 +68,7 @@ tasks.withType(Javadoc) {
     options.addStringOption('encoding', 'UTF-8')
 }
 
-publishing {
-    publications {
-        NoOp(MavenPublication) {
-            groupId = 'com.github.gustafah'
-            artifactId = 'mock-interceptor-noclient'
-            version = application.versionName
-
-            artifact sourcesNoOpJar
-            artifact javadocNoOpJar
-            artifact "$buildDir/outputs/aar/mock-interceptor-noclient-release.aar"
-
-            pom {
-
-                name = 'Mock Interceptor No-Op'
-                description = 'An interceptor for Mocking Requests :)'
-                url = 'https://github.com/gustafah/mock-interceptor'
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = developerId
-                        name = developerName
-                        email = developerEmail
-                    }
-                }
-                scm {
-                    url = 'https://github.com/gustafah/mock-interceptor'
-                    connection = "scm:https://github.com/gustafah/mock-interceptor.git"
-                    developerConnection = 'scm:git@github.com:gustafah/mock-interceptor.git'
-                }
-            }
-        }
-        Client(MavenPublication) {
-            groupId = 'com.github.gustafah'
-            artifactId = 'mock-interceptor'
-            version = application.versionName
-
-            artifact sourcesJar
-            artifact javadocJar
-            artifact "$buildDir/outputs/aar/mock-interceptor-client-release.aar"
-
-            pom {
-
-                name = 'Mock Interceptor'
-                description = 'An interceptor for Mocking Requests :)'
-                url = 'https://github.com/gustafah/mock-interceptor'
-                licenses {
-                    license {
-                        name = 'The Apache License, Version 2.0'
-                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id = developerId
-                        name = developerName
-                        email = developerEmail
-                    }
-                }
-                scm {
-                    url = 'https://github.com/gustafah/mock-interceptor'
-                    connection = "scm:https://github.com/gustafah/mock-interceptor.git"
-                    developerConnection = 'scm:git@github.com:gustafah/mock-interceptor.git'
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-//            url = project.rootProject.buildDir
-            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
-            credentials {
-                username = ossrhUsername
-                password = ossrhPassword
-            }
-        }
-    }
-}
-
-signing {
-    sign publishing.publications.NoOp
-    sign publishing.publications.Client
-}
+apply from: "$rootDir/tools/publish.gradle"
 
 dependencies {
     implementation dependency_versions.kotlin
