@@ -60,6 +60,20 @@ object MockFileUtils {
         return null
     }
 
+    internal fun copy(source: File, destination: File) {
+        val inFile = FileInputStream(source).channel
+        val outFile = FileOutputStream(destination).channel
+
+        try {
+            inFile.transferTo(0, inFile.size(), outFile)
+        } catch (e: java.lang.Exception) {
+            Log.e(MockUtils::class.simpleName, e.message ?: ERROR_WRITING_FILE)
+        } finally {
+            inFile.close()
+            outFile.close()
+        }
+    }
+
     private fun getFileDisplayName(uri: Uri, contentResolver: ContentResolver): String? {
         var displayName: String? = null
         contentResolver
@@ -176,8 +190,8 @@ object MockFileUtils {
         ZipInputStream(BufferedInputStream(FileInputStream(zipFile))).use { zis ->
             var count: Int
             val buffer = ByteArray(8192)
-            while (zis.nextEntry != null) {
-                val ze = zis.nextEntry
+            while (true) {
+                val ze = zis.nextEntry ?: break
                 val file = File(targetDirectory, ze.name)
                 val dir = if (ze.isDirectory) file else file.parentFile
                 if (!dir.isDirectory && !dir.mkdirs()) throw FileNotFoundException(

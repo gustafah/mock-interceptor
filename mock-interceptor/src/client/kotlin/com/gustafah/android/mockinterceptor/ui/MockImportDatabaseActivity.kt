@@ -25,22 +25,15 @@ class MockImportDatabaseActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 3455) {
-            if (resultCode == AppCompatActivity.RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 if (data != null && data.data != null) {
-                    val file = File(
-                        writeFileContent(
-                            data.data!!,
-                            getExternalFilesDir(null),
-                            contentResolver
-                        ) ?: ""
-                    )
-                    MockInterceptor.recreateDatabase(file)
+                    MockInterceptor.recreateDatabase(data.data!!, contentResolver)
+                    finish()
                 } else {
                     Log.e(MockImportDatabaseActivity::class.simpleName, ERROR_FILE_NOT_FOUND)
                 }
             }
         }
-        finish()
     }
 
 }
