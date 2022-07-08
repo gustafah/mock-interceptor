@@ -6,11 +6,15 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.4'
         classpath dependency_versions.kotlinGradle
+        classpath dependency_versions.mavenPublishing
     }
 }
 

@@ -1,0 +1,43 @@
+apply plugin: 'io.github.pedro-bachiega.sonatype-maven-publish'
+
+group = 'com.github.gustafah'
+version = application.versionName
+
+sonatypePublishing {
+    repositoryUrl = "https://github.com/gustafah/mock-interceptor"
+    repositoryConnectionUrl = "scm:https://github.com/gustafah/mock-interceptor.git"
+    licenseName = "The Apache License, Version 2.0"
+    licenseUrl = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+    developerId = DEVELOPER_ID
+    developerName = DEVELOPER_NAME
+    developerEmail = DEVELOPER_EMAIL
+    username = OSSRH_USERNAME
+    password = OSSRH_PASSWORD
+}
+
+publications {
+    client {
+        artifactId = 'mock-interceptor'
+        libName = 'Mock Interceptor'
+        libDescription = "An interceptor for Mocking Requests :)"
+
+        artifact sourcesJar
+        artifact javadocJar
+        artifact "$buildDir/outputs/aar/mock-interceptor-client-release.aar"
+    }
+
+    noOp {
+        artifactId = 'mock-interceptor-noclient'
+        libName = 'Mock Interceptor No-Op'
+        libDescription = "An interceptor for Mocking Requests :)"
+
+        artifact sourcesNoOpJar
+        artifact javadocNoOpJar
+        artifact "$buildDir/outputs/aar/mock-interceptor-noclient-release.aar"
+    }
+}
+
+task publishRelease(group: "publishing") {
+    dependsOn "assembleRelease"
+    finalizedBy "publish"
+}
