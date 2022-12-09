@@ -1,161 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="16dp"
-    android:orientation="vertical">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Mock Configuration"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        tools:ignore="HardcodedText" />
-
-    <RadioGroup
-        android:id="@+id/radio_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/button_save_db"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        tools:ignore="HardcodedText" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginVertical="8dp"
-        android:alpha=".5"
-        android:background="@color/white" />
+    android:layout_marginVertical="16dp"
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
-        android:id="@+id/linear_database"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Responses from Database"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            tools:ignore="HardcodedText" />
-
-        <Button
-            android:id="@+id/button_fetch_response"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Fetch Response from API"
-            tools:ignore="HardcodedText" />
-
-        <Button
-            android:id="@+id/button_export_database"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Export Database"
-            tools:ignore="HardcodedText" />
-
-        <Button
-            android:id="@+id/button_import_database"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Import Database"
-            tools:ignore="HardcodedText" />
-
-        <Button
-            android:id="@+id/button_delete_database"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Delete Database"
-            tools:ignore="HardcodedText" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_mock_file"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Launch Notification"
         android:orientation="vertical"
-        tools:ignore="HardcodedText" >
+        android:paddingHorizontal="16dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Responses from Mock File"
+            android:text="Mock Configuration"
             android:textColor="@color/white"
             android:textSize="20sp"
             tools:ignore="HardcodedText" />
 
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <Button
-            android:id="@+id/button_sample1"
+            android:id="@+id/button_save_db"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mocked With Annotation"
+            android:text="Save"
             tools:ignore="HardcodedText" />
 
-        <Button
-            android:id="@+id/button_sample2"
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="8dp"
+            android:alpha=".5"
+            android:background="@color/white" />
+
+        <LinearLayout
+            android:id="@+id/linear_database"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mocked Without Annotation"
-            tools:ignore="HardcodedText" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_sample3"
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Responses from Database"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/button_fetch_response"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fetch Response from API"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/button_export_database"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Export Database"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/button_import_database"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Import Database"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/button_delete_database"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delete Database"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linear_mock_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mocked Without Annotation With Param"
-            tools:ignore="HardcodedText" />
+            android:orientation="vertical"
+            android:text="Launch Notification"
+            tools:ignore="HardcodedText">
 
-        <Button
-            android:id="@+id/button_sample4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Multi Mocked"
-            tools:ignore="HardcodedText" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Responses from Mock File"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                tools:ignore="HardcodedText" />
 
-        <Button
-            android:id="@+id/button_sample5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No Mock No File"
-        tools:ignore="HardcodedText" />
+            <Button
+                android:id="@+id/button_sample1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mocked With Annotation + Additional List"
+                tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/button_sample6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Multi Mocks - File Not Found"
-        tools:ignore="HardcodedText" />
+            <Button
+                android:id="@+id/button_sample1_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mocked With Annotation - Additional List"
+                tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/button_sample7"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Launch Notification"
-        tools:ignore="HardcodedText" />
+            <Button
+                android:id="@+id/button_sample2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mocked Without Annotation"
+                tools:ignore="HardcodedText" />
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/button_sample3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mocked Without Annotation With Param"
+                tools:ignore="HardcodedText" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:layout_marginVertical="16dp">
+            <Button
+                android:id="@+id/button_sample4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Multi Mocked"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/button_sample5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No Mock No File"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/button_sample6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Multi Mocks - File Not Found"
+                tools:ignore="HardcodedText" />
+
+            <EditText
+                android:id="@+id/input_page"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:hint="0 para dialog"
+                android:importantForAutofill="no"
+                android:inputType="number" />
+
+            <Button
+                android:id="@+id/button_sample7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="Teste Filter 1 a 5"
+                tools:ignore="HardcodedText" />
+
+            <Button
+                android:id="@+id/button_sample8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Launch Notification"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/text_response"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black" />
 
-    </ScrollView>
-
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>

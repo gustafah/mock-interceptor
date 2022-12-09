@@ -60,11 +60,13 @@ object MockInterceptor : Interceptor {
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
     fun exportDatabase() {
-        config.context().startActivity(Intent(config.context(), MockExportDatabaseActivity::class.java))
+        config.context()
+            .startActivity(Intent(config.context(), MockExportDatabaseActivity::class.java))
     }
 
     fun importDatabase() {
-        config.context().startActivity(Intent(config.context(), MockImportDatabaseActivity::class.java))
+        config.context()
+            .startActivity(Intent(config.context(), MockImportDatabaseActivity::class.java))
     }
 
     fun deleteDatabase() {
@@ -237,7 +239,7 @@ object MockInterceptor : Interceptor {
     private fun readMockFromMockFiles(chain: Interceptor.Chain): Response {
         val request: Request = chain.request()
         val mockContent = config.fetchMockContentFromRequest(request)
-        return mockContent?.let {
+        val response = mockContent?.let {
             if (it.remove(JSON_FIELD_MULTI) == true) {
                 pickMultiMockResponse(it, request)
             } else {
@@ -251,6 +253,8 @@ object MockInterceptor : Interceptor {
             jsonResponse = MockUtils.ERROR_JSON_NO_DATA,
             request = request
         )
+        Thread.sleep((config.delay.lower..config.delay.upper).random().toLong())
+        return response
     }
 
     private fun pickMultiMockResponse(content: JSONObject, request: Request): Response {

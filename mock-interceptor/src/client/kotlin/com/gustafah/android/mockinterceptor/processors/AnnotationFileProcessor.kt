@@ -12,27 +12,32 @@ import retrofit2.Invocation
 class AnnotationFileProcessor : FileProcessor() {
 
     override fun process(config: MockConfig, request: Request): JSONObject? {
-        val files =
-            request.tag(Invocation::class.java)?.method()?.getAnnotation(Mock::class.java)?.let {
-                when {
-                    it.path.isNotEmpty() -> arrayOf(it.path)
-                    it.files.isNotEmpty() -> it.files
+        return request.tag(Invocation::class.java)?.method()?.getAnnotation(Mock::class.java)
+            ?.let { notation ->
+                val files = when {
+                    notation.path.isNotEmpty() -> arrayOf(notation.path)
+                    notation.files.isNotEmpty() -> notation.files
                     else -> null
                 }
-            }
-        return files?.let {
-            if (it.size > 1) {
-                val output = JSONObject()
-                output.put(JSON_FIELD_MULTI, true)
-                it.forEach { fileName ->
-                    output.put(fileName, getContentFromFile(config, fileName))
+                val additionalFiles: Array<String>? = config.additionalMockFiles?.let {
+                    if (!notation.ignoreAdditionalList && it.isNotEmpty()) {
+                        it.toTypedArray()
+                    } else null
                 }
-                output
-            } else {
-                val fileName = it.first()
-                getContentFromFile(config, fileName)
+                ((files ?: emptyArray()) + (additionalFiles ?: emptyArray())).let {
+                    if (it.size > 1) {
+                        val output = JSONObject()
+                        output.put(JSON_FIELD_MULTI, true)
+                        it.forEach { fileName ->
+                            output.put(fileName, getContentFromFile(config, fileName))
+                        }
+                        output
+                    } else if (it.size == 1) {
+                        val fileName = it.first()
+                        getContentFromFile(config, fileName)
+                    } else null
+                }
             }
-        }
     }
 
     private fun getContentFromFile(config: MockConfig, fileName: String): JSONObject {

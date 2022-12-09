@@ -1,8 +1,8 @@
 package com.gustafah.android.mockinterceptor.sample.repository
 
 import androidx.lifecycle.liveData
-import com.gustafah.android.mockinterceptor.sample.service.SampleApi
 import com.gustafah.android.mockinterceptor.sample.model.Response
+import com.gustafah.android.mockinterceptor.sample.service.SampleApi
 
 class SampleRepository(private val service: SampleApi) {
 
@@ -11,7 +11,28 @@ class SampleRepository(private val service: SampleApi) {
         if (response.isSuccessful) {
             emit(Response.Success(data = response.body()))
         } else {
-            emit(Response.Error(exception = Exception(response.errorBody()?.string() ?: "Fail to fetch Response")))
+            emit(
+                Response.Error(
+                    exception = Exception(
+                        response.errorBody()?.string() ?: "Fail to fetch Response"
+                    )
+                )
+            )
+        }
+    }
+
+    fun fetchResponseWithNoAdditional() = liveData {
+        val response = service.fetchWithNoDefaultList()
+        if (response.isSuccessful) {
+            emit(Response.Success(data = response.body()))
+        } else {
+            emit(
+                Response.Error(
+                    exception = Exception(
+                        response.errorBody()?.string() ?: "Fail to fetch Response"
+                    )
+                )
+            )
         }
     }
 
@@ -20,7 +41,13 @@ class SampleRepository(private val service: SampleApi) {
         if (response.isSuccessful) {
             emit(Response.Success(data = response.body()))
         } else {
-            emit(Response.Error(exception = Exception(response.errorBody()?.string() ?: "Fail to fetch Response")))
+            emit(
+                Response.Error(
+                    exception = Exception(
+                        response.errorBody()?.string() ?: "Fail to fetch Response"
+                    )
+                )
+            )
         }
     }
 
@@ -38,7 +65,13 @@ class SampleRepository(private val service: SampleApi) {
         if (response.isSuccessful) {
             emit(Response.Success(data = response.body()))
         } else {
-            emit(Response.Error(exception = Exception(response.errorBody()?.string() ?: "Fail to fetch Response")))
+            emit(
+                Response.Error(
+                    exception = Exception(
+                        response.errorBody()?.string() ?: "Fail to fetch Response"
+                    )
+                )
+            )
         }
     }
 
@@ -47,12 +80,27 @@ class SampleRepository(private val service: SampleApi) {
         if (response.isSuccessful) {
             emit(Response.Success(data = response.body()))
         } else {
-            emit(Response.Error(exception = Exception(response.errorBody()?.string() ?: "Fail to fetch Response")))
+            emit(
+                Response.Error(
+                    exception = Exception(
+                        response.errorBody()?.string() ?: "Fail to fetch Response"
+                    )
+                )
+            )
         }
     }
 
     fun fetchResponseMultiMockNoFile() = liveData {
         val response = service.fetchMultiMockNoFile()
+        if (response.isSuccessful) {
+            emit(Response.Success(data = response.body()))
+        } else {
+            emit(Response.Error(exception = Exception("Fail to fetch Response")))
+        }
+    }
+
+    fun fetchResponsePaginated(page: Int) = liveData {
+        val response = service.fetchPaginated(page)
         if (response.isSuccessful) {
             emit(Response.Success(data = response.body()))
         } else {
