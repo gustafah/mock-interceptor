@@ -52,7 +52,7 @@ class MockConfig private constructor(builder: Builder) {
         assetsSeparator = builder.assetsSeparator
         selectorMode = builder.selectorMode
         saveMockMode = builder.saveMockMode
-        delay = builder.delay ?: Range(0, 0)
+        delay = builder.delay ?: Range(0, 1)
         additionalMockFiles = builder.additionalMock
         context =
             builder.context ?: throw (InvalidParameterException("No Context"))
