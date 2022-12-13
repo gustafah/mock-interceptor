@@ -2,6 +2,7 @@ package com.gustafah.android.mockinterceptor
 
 import android.content.Context
 import android.preference.PreferenceManager
+import android.util.Range
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode
 import com.gustafah.android.mockinterceptor.MockUtils.prefs
 import com.gustafah.android.mockinterceptor.processors.AnnotationFileProcessor
@@ -34,6 +35,8 @@ class MockConfig private constructor(builder: Builder) {
     internal val assetsSeparator: String
     internal var requestArguments = emptyList<String>()
         private set
+    val delay: Range<Int>
+    val additionalMockFiles: List<String>?
     val saveMockMode: OptionRecordMock
     val selectorMode: OptionsSelectorMode
     val context: () -> Context
@@ -49,6 +52,8 @@ class MockConfig private constructor(builder: Builder) {
         assetsSeparator = builder.assetsSeparator
         selectorMode = builder.selectorMode
         saveMockMode = builder.saveMockMode
+        delay = builder.delay ?: Range(0, 1)
+        additionalMockFiles = builder.additionalMock
         context =
             builder.context ?: throw (InvalidParameterException("No Context"))
         prefs = PreferenceManager.getDefaultSharedPreferences(context())
@@ -109,6 +114,10 @@ class MockConfig private constructor(builder: Builder) {
             private set
         internal var selectorMode: OptionsSelectorMode = OptionsSelectorMode.ALWAYS_ON_TOP
             private set
+        internal var delay: Range<Int>? = null
+            private set
+        internal var additionalMock: List<String>? = null
+            private set
 
         fun prefix(prefix: String) = apply { this.assetsPrefix = prefix }
         fun suffix(suffix: String) = apply { this.assetsSuffix = suffix }
@@ -116,14 +125,21 @@ class MockConfig private constructor(builder: Builder) {
         fun context(context: () -> Context) = apply { this.context = context }
         fun selectorMode(mode: OptionsSelectorMode) = apply { this.selectorMode = mode }
         fun saveMockMode(saveMock: OptionRecordMock) = apply { this.saveMockMode = saveMock }
+        fun setDelay(minDelay: Int, maxDelay: Int) = setDelay(Range(minDelay, maxDelay))
+        fun setDelay(delay: Range<Int>) = apply { this.delay = delay }
+        fun additionalMocks(additionalMockFiles: List<String>) =
+            apply { this.additionalMock = additionalMockFiles }
+
         fun build() = MockConfig(this)
     }
 
     /**
      * Determines the behaviour of Options Selector
-     * OptionsSelectorMode.ALWAYS_ON_TOP WILL cause your onResume to be called
-     * OptionsSelectorMode.STANDARD MAY cause the Options Dialog to display under
-     * certain views, depending on how they are added to your view stash.
+     * OptionsSelectorMode.ALWAYS_ON_TOP Displays DIALOG inside an empty Activity
+     *     (Will trigger onResume)
+     * OptionsSelectorMode.STANDARD Displays DIALOG on the same Activity
+     *     (MAY cause the Options Dialog to display under certain views, depending on how
+     *     they are added to your view stash).
      * OptionsSelectorMode.NO_SELECTION won't display dialog
      */
     enum class OptionsSelectorMode {

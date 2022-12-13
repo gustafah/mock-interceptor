@@ -21,6 +21,8 @@ fun serviceClient(context: Context, saveMockMode: MockConfig.OptionRecordMock): 
                     .saveMockMode(saveMockMode) //optional
                     .context { context } //mandatory
                     .selectorMode(MockConfig.OptionsSelectorMode.STANDARD) //recommended
+                    .additionalMocks(listOf("error.json"))
+                    .setDelay(3000, 5000)
                     .build()
             }
         )

@@ -1,7 +1,6 @@
 package com.gustafah.android.mockinterceptor.sample.ui
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
@@ -38,9 +37,21 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
         val repository = SampleRepository(serviceClient(context = this, mockOption))
         val viewModel = SampleViewModel(repository)
 
-        addOnRadioButton("Response from Mock File", MockConfig.OptionRecordMock.DISABLED.ordinal, saveMockMode)
-        addOnRadioButton("Record API response and save on Database", MockConfig.OptionRecordMock.RECORD.ordinal, saveMockMode)
-        addOnRadioButton("Playback API response from Database", MockConfig.OptionRecordMock.PLAYBACK.ordinal, saveMockMode)
+        addOnRadioButton(
+            "Response from Mock File",
+            MockConfig.OptionRecordMock.DISABLED.ordinal,
+            saveMockMode
+        )
+        addOnRadioButton(
+            "Record API response and save on Database",
+            MockConfig.OptionRecordMock.RECORD.ordinal,
+            saveMockMode
+        )
+        addOnRadioButton(
+            "Playback API response from Database",
+            MockConfig.OptionRecordMock.PLAYBACK.ordinal,
+            saveMockMode
+        )
 
         button_save_db.setOnClickListener {
             val checkedView = radio_group.findViewById<View>(radio_group.checkedRadioButtonId)
@@ -96,6 +107,9 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
         button_sample1.setOnClickListener {
             viewModel.fetchResponseMock()
         }
+        button_sample1_1.setOnClickListener {
+            viewModel.fetchResponseWithNoAdditional()
+        }
         button_sample2.setOnClickListener {
             viewModel.fetchResponseNoMock()
         }
@@ -112,6 +126,9 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
             viewModel.fetchResponseMultiMockNoFile()
         }
         button_sample7.setOnClickListener {
+            viewModel.fetchResponsePaginated(input_page.text.toString())
+        }
+        button_sample8.setOnClickListener {
             MockNotification.showMockNotification(this)
         }
     }

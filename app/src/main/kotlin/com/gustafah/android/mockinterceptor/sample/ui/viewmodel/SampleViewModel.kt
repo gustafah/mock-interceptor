@@ -20,6 +20,10 @@ class SampleViewModel(private val repository: SampleRepository) {
         sendToLiveData(repository.fetchResponseMock())
     }
 
+    fun fetchResponseWithNoAdditional() {
+        sendToLiveData(repository.fetchResponseWithNoAdditional())
+    }
+
     fun fetchResponseNoMock() {
         sendToLiveData(repository.fetchResponseNoMock())
     }
@@ -38,6 +42,10 @@ class SampleViewModel(private val repository: SampleRepository) {
 
     fun fetchResponseMultiMockNoFile() {
         sendToLiveData(repository.fetchResponseMultiMockNoFile())
+    }
+
+    fun fetchResponsePaginated(page: String) {
+        sendToLiveData(repository.fetchResponsePaginated(if (page.isEmpty()) 0 else page.toInt()))
     }
 
     private fun sendToLiveData(response: LiveData<Response<List<FetchResponse>?>>) =

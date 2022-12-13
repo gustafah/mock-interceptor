@@ -1,12 +1,16 @@
 package com.gustafah.android.mockinterceptor
 
+import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import com.gustafah.android.mockinterceptor.MockConfig.OptionsSelectorMode.NO_SELECTION
 import com.gustafah.android.mockinterceptor.MockFileUtils.FILE_EXTENSION_DB
 import com.gustafah.android.mockinterceptor.MockFileUtils.FILE_EXTENSION_JSON
 import com.gustafah.android.mockinterceptor.MockFileUtils.FILE_EXTENSION_ZIP
 import com.gustafah.android.mockinterceptor.MockFileUtils.addJsonToDatabase
+import com.gustafah.android.mockinterceptor.MockFileUtils.copy
 import com.gustafah.android.mockinterceptor.MockFileUtils.deleteRecursive
 import com.gustafah.android.mockinterceptor.MockFileUtils.getFileNameByRequest
 import com.gustafah.android.mockinterceptor.MockFileUtils.unzipFileAtPath
@@ -33,10 +37,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import okhttp3.Interceptor
-import okhttp3.MediaType
 import okhttp3.Request
 import okhttp3.Response
-import okhttp3.ResponseBody
 import org.json.JSONObject
 import java.io.File
 import java.nio.charset.Charset
@@ -58,11 +60,13 @@ object MockInterceptor : Interceptor {
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
     fun exportDatabase() {
-        config.context().startActivity(Intent(config.context(), MockExportDatabaseActivity::class.java))
+        config.context()
+            .startActivity(Intent(config.context(), MockExportDatabaseActivity::class.java))
     }
 
     fun importDatabase() {
-        config.context().startActivity(Intent(config.context(), MockImportDatabaseActivity::class.java))
+        config.context()
+            .startActivity(Intent(config.context(), MockImportDatabaseActivity::class.java))
     }
 
     fun deleteDatabase() {
@@ -98,13 +102,19 @@ object MockInterceptor : Interceptor {
         }
     }
 
-    internal fun recreateDatabase(file: File) =
-        scope.launch {
+    internal fun recreateDatabase(uri: Uri, contentResolver: ContentResolver) =
+        scope.launch(Dispatchers.IO) {
             val context = config.context()
+            val file = File(
+                MockFileUtils.writeFileContent(
+                    uri,
+                    context.getExternalFilesDir(null),
+                    contentResolver
+                ) ?: ""
+            )
             when (file.path.substring(file.path.lastIndexOf("."))) {
                 FILE_EXTENSION_DB -> {
-                    deleteAllDatabase()
-                    MockInterceptorDatabase.getInstance(context, file)
+                    importDatabaseContent(file)
                 }
                 FILE_EXTENSION_JSON -> addJsonToDatabase(context, file)
                 FILE_EXTENSION_ZIP -> {
@@ -115,6 +125,28 @@ object MockInterceptor : Interceptor {
                 }
                 else -> throw IllegalAccessError("")
             }
+        }
+
+    private fun importDatabaseContent(file: File) =
+        scope.launch {
+            val context = config.context()
+            displayOptions(
+                title = context.getString(R.string.mock_import_database_title),
+                data = Pair(
+                    arrayOf(
+                        context.getString(R.string.mock_import_database_option_clean),
+                        context.getString(R.string.mock_import_database_option_replace)
+                    ),
+                    arrayOf(
+                        context.getString(R.string.mock_import_database_option_clean_description),
+                        context.getString(R.string.mock_import_database_option_replace_description)
+                    )
+                )
+            )
+            waitValidation()
+            if (optChoice.get() == 0) importDatabaseInCleanMode(file, context)
+            else importDatabaseReplacing(file, context)
+            optChoice.set(-1)
         }
 
     internal fun exportDatabaseContent() =
@@ -207,7 +239,7 @@ object MockInterceptor : Interceptor {
     private fun readMockFromMockFiles(chain: Interceptor.Chain): Response {
         val request: Request = chain.request()
         val mockContent = config.fetchMockContentFromRequest(request)
-        return mockContent?.let {
+        val response = mockContent?.let {
             if (it.remove(JSON_FIELD_MULTI) == true) {
                 pickMultiMockResponse(it, request)
             } else {
@@ -221,6 +253,8 @@ object MockInterceptor : Interceptor {
             jsonResponse = MockUtils.ERROR_JSON_NO_DATA,
             request = request
         )
+        Thread.sleep((config.delay.lower..config.delay.upper).random().toLong())
+        return response
     }
 
     private fun pickMultiMockResponse(content: JSONObject, request: Request): Response {
@@ -312,6 +346,16 @@ object MockInterceptor : Interceptor {
                 )
             )
         }
+    }
+
+    private fun importDatabaseInCleanMode(file: File, context: Context) {
+        deleteAllDatabase()
+        MockInterceptorDatabase.getInstance(context, file)
+    }
+
+    private fun importDatabaseReplacing(file: File, context: Context) {
+        val database = context.getDatabasePath(MockInterceptorDatabase.NAME)
+        copy(file, database)
     }
 
     private fun exportDatabaseInDBFile() {

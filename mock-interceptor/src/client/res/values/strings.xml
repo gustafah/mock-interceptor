@@ -14,6 +14,11 @@
     <string name="mock_alert_button_no">No</string>
     <string name="mock_alert_button_ok">OK</string>
     <!-- Mock Save Database Alert -->
+    <string name="mock_import_database_title">How do you want to import your database?</string>
+    <string name="mock_import_database_option_clean">Clean Import</string>
+    <string name="mock_import_database_option_clean_description">It will import the database cleaning the current one and recreating</string>
+    <string name="mock_import_database_option_replace">Replace File</string>
+    <string name="mock_import_database_option_replace_description">It will import the database replacing the current one</string>
     <string name="mock_save_database_title">How do you want to export your database?</string>
     <string name="mock_save_database_option_db_file">DB File</string>
     <string name="mock_save_database_option_db_file_description">It will export all your database in a single .db file"</string>
