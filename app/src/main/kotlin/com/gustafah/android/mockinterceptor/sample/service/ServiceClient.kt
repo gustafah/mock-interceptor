@@ -9,7 +9,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-fun serviceClient(context: Context, saveMockMode: MockConfig.OptionRecordMock): SampleApi {
+fun serviceClient(
+    context: Context,
+    saveMockMode: MockConfig.OptionRecordMock,
+    replaceMockOption: MockConfig.ReplaceMockOption
+): SampleApi {
     val logging = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
     val client = OkHttpClient.Builder()
         .addInterceptor(logging)
@@ -19,6 +23,7 @@ fun serviceClient(context: Context, saveMockMode: MockConfig.OptionRecordMock): 
                     .suffix(".json") //optional
                     .separator("_") //optional
                     .saveMockMode(saveMockMode) //optional
+                    .replaceMockOption(replaceMockOption) //optional
                     .context { context } //mandatory
                     .selectorMode(MockConfig.OptionsSelectorMode.STANDARD) //recommended
                     .additionalMocks(listOf("error.json"))

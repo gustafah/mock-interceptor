@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Mock Configuration"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="20sp"
             tools:ignore="HardcodedText" />
 
@@ -50,8 +50,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Responses from Database"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="20sp"
+                tools:ignore="HardcodedText" />
+
+            <RadioGroup
+                android:id="@+id/radio_button_record_mode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/button_record_mode_save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save"
                 tools:ignore="HardcodedText" />
 
             <Button
@@ -76,6 +88,13 @@
                 tools:ignore="HardcodedText" />
 
             <Button
+                android:id="@+id/button_replace_database"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Replace Database"
+                tools:ignore="HardcodedText" />
+
+            <Button
                 android:id="@+id/button_delete_database"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Responses from Mock File"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 tools:ignore="HardcodedText" />
 

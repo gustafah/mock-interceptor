@@ -10,6 +10,10 @@ import com.gustafah.android.mockinterceptor.MockUtils.ERROR_FILE_NOT_FOUND
 import com.gustafah.android.mockinterceptor.R
 import java.io.File
 
+internal const val IMPORT_DATABASE_MODE = "import_database_mode"
+internal const val UPDATE_INFO = 3455
+internal const val CLEAR_DATABASE = 6584
+
 class MockImportDatabaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,22 +22,28 @@ class MockImportDatabaseActivity : AppCompatActivity() {
         data.type = "*/*"
         startActivityForResult(
             Intent.createChooser(data, getString(R.string.mock_file_chooser_import_yes)),
-            3455
+            intent.getIntExtra(IMPORT_DATABASE_MODE, UPDATE_INFO)
         )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 3455) {
-            if (resultCode == RESULT_OK) {
-                if (data != null && data.data != null) {
-                    MockInterceptor.recreateDatabase(data.data!!, contentResolver)
-                    finish()
-                } else {
-                    Log.e(MockImportDatabaseActivity::class.simpleName, ERROR_FILE_NOT_FOUND)
+        if (resultCode == RESULT_OK) {
+            if (data != null && data.data != null) {
+                val info = data.data!!
+                when (requestCode) {
+                    CLEAR_DATABASE -> {
+                        MockInterceptor.replaceDatabase(info, contentResolver)
+                    }
+                    else -> {
+                        MockInterceptor.recreateDatabase(info, contentResolver)
+                    }
                 }
+            } else {
+                Log.e(MockImportDatabaseActivity::class.simpleName, ERROR_FILE_NOT_FOUND)
             }
         }
+        finish()
     }
 
 }

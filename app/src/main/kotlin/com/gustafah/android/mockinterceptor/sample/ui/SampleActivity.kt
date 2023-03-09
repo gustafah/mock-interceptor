@@ -6,6 +6,7 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -31,39 +32,25 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
             "SAVE_MOCK_MODE",
             MockConfig.OptionRecordMock.DISABLED.ordinal
         )
+        val replaceMockMode = getPreferences(Context.MODE_PRIVATE).getInt(
+            "REPLACE_MOCK_MODE",
+            MockConfig.ReplaceMockOption.DEFAULT.ordinal
+        )
         val isOnSaveMockMode = saveMockMode != MockConfig.OptionRecordMock.DISABLED.ordinal
         val mockOption = MockConfig.OptionRecordMock.values()[saveMockMode]
+        val replaceOption = MockConfig.ReplaceMockOption.values()[replaceMockMode]
 
-        val repository = SampleRepository(serviceClient(context = this, mockOption))
+        val repository = SampleRepository(serviceClient(context = this, mockOption, replaceOption))
         val viewModel = SampleViewModel(repository)
 
-        addOnRadioButton(
-            "Response from Mock File",
-            MockConfig.OptionRecordMock.DISABLED.ordinal,
-            saveMockMode
-        )
-        addOnRadioButton(
-            "Record API response and save on Database",
-            MockConfig.OptionRecordMock.RECORD.ordinal,
-            saveMockMode
-        )
-        addOnRadioButton(
-            "Playback API response from Database",
-            MockConfig.OptionRecordMock.PLAYBACK.ordinal,
-            saveMockMode
-        )
 
-        button_save_db.setOnClickListener {
-            val checkedView = radio_group.findViewById<View>(radio_group.checkedRadioButtonId)
-            with(getPreferences(Context.MODE_PRIVATE).edit()) {
-                putInt("SAVE_MOCK_MODE", checkedView.tag.toString().toInt())
-                apply()
-            }
-            triggerRebirth()
-        }
+        setupSaveModeRadioButton(saveMockMode)
+        setupRecordRadioButton(replaceMockMode)
 
         linear_database.isVisible = isOnSaveMockMode
         linear_mock_file.isVisible = !isOnSaveMockMode
+        radio_button_record_mode.isVisible =
+            saveMockMode == MockConfig.OptionRecordMock.RECORD.ordinal
 
         setupMocksFromDatabase(viewModel, saveMockMode)
         setupMocksFromMockFile(viewModel)
@@ -85,6 +72,65 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
         }
     }
 
+    private fun setupSaveModeRadioButton(saveMockMode: Int) {
+        addOnRadioButton(
+            radio_group,
+            "Response from Mock File",
+            MockConfig.OptionRecordMock.DISABLED.ordinal,
+            saveMockMode
+        )
+        addOnRadioButton(
+            radio_group,
+            "Record API response and save on Database",
+            MockConfig.OptionRecordMock.RECORD.ordinal,
+            saveMockMode
+        )
+        addOnRadioButton(
+            radio_group,
+            "Playback API response from Database",
+            MockConfig.OptionRecordMock.PLAYBACK.ordinal,
+            saveMockMode
+        )
+
+        button_save_db.setOnClickListener {
+            val checkedView = radio_group.findViewById<View>(radio_group.checkedRadioButtonId)
+            with(getPreferences(Context.MODE_PRIVATE).edit()) {
+                putInt("SAVE_MOCK_MODE", checkedView.tag.toString().toInt())
+                apply()
+            }
+            triggerRebirth()
+        }
+    }
+
+    private fun setupRecordRadioButton(replaceMockMode: Int) {
+        addOnRadioButton(
+            radio_button_record_mode,
+            "Default",
+            MockConfig.ReplaceMockOption.DEFAULT.ordinal,
+            replaceMockMode
+        )
+        addOnRadioButton(
+            radio_button_record_mode,
+            "Keep Mock",
+            MockConfig.ReplaceMockOption.KEEP_MOCK.ordinal,
+            replaceMockMode
+        )
+        addOnRadioButton(
+            radio_button_record_mode,
+            "Replace Mock",
+            MockConfig.ReplaceMockOption.REPLACE_MOCK.ordinal,
+            replaceMockMode
+        )
+        button_record_mode_save.setOnClickListener {
+            val checkedView = radio_button_record_mode.findViewById<View>(radio_button_record_mode.checkedRadioButtonId)
+            with(getPreferences(Context.MODE_PRIVATE).edit()) {
+                putInt("REPLACE_MOCK_MODE", checkedView.tag.toString().toInt())
+                apply()
+            }
+            triggerRebirth()
+        }
+    }
+
     private fun setupMocksFromDatabase(viewModel: SampleViewModel, saveMockMode: Int) {
         button_fetch_response.text =
             if (saveMockMode == MockConfig.OptionRecordMock.RECORD.ordinal) "Fetch Response from API"
@@ -97,6 +143,9 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
         }
         button_import_database.setOnClickListener {
             MockInterceptor.importDatabase()
+        }
+        button_replace_database.setOnClickListener {
+            MockInterceptor.replaceDatabase()
         }
         button_delete_database.setOnClickListener {
             MockInterceptor.deleteDatabase()
@@ -133,13 +182,18 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
         }
     }
 
-    private fun addOnRadioButton(text: String, tag: Int, saveMockMode: Int) {
+    private fun addOnRadioButton(
+        radioGroup: RadioGroup,
+        text: String,
+        tag: Int,
+        saveMockMode: Int
+    ) {
         val radioButton = RadioButton(this).apply {
             this.id = View.generateViewId()
             this.text = text
             this.tag = tag
         }
-        radio_group.addView(radioButton)
+        radioGroup.addView(radioButton)
         radioButton.isChecked = saveMockMode == tag
     }
 
