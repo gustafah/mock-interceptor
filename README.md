@@ -1,4 +1,6 @@
-# mock-interceptor > $mock_version = 1.3.0
+# mock-interceptor > $mock_version = 1.6.0
+
+# [Changelog](./CHANGELOG.md)
 
 We've all been there, constantly waiting on APIs that never come, delaying our development.
 
