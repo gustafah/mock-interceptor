@@ -66,7 +66,9 @@ object MockInterceptor : Interceptor {
 
     fun importDatabase() {
         config.context()
-            .startActivity(Intent(config.context(), MockImportDatabaseActivity::class.java))
+            .startActivity(Intent(config.context(), MockImportDatabaseActivity::class.java).apply {
+                putExtra(IMPORT_DATABASE_MODE, UPDATE_INFO)
+            })
     }
 
     fun deleteDatabase() {
@@ -86,6 +88,13 @@ object MockInterceptor : Interceptor {
                 context.getString(R.string.mock_alert_button_ok)
             )
         }
+    }
+
+    fun replaceDatabase() {
+        config.context()
+            .startActivity(Intent(config.context(), MockImportDatabaseActivity::class.java).apply {
+                putExtra(IMPORT_DATABASE_MODE, CLEAR_DATABASE)
+            })
     }
 
     fun release(which: Int) = synchronized(lock) {
@@ -113,9 +122,7 @@ object MockInterceptor : Interceptor {
                 ) ?: ""
             )
             when (file.path.substring(file.path.lastIndexOf("."))) {
-                FILE_EXTENSION_DB -> {
-                    importDatabaseContent(file)
-                }
+                FILE_EXTENSION_DB -> importDatabaseInCleanMode(file, context)
                 FILE_EXTENSION_JSON -> addJsonToDatabase(context, file)
                 FILE_EXTENSION_ZIP -> {
                     unzipFileAtPath(file, context.filesDir.parentFile)
@@ -127,29 +134,20 @@ object MockInterceptor : Interceptor {
             }
         }
 
-    private fun importDatabaseContent(file: File) =
-        scope.launch {
+    internal fun replaceDatabase(uri: Uri, contentResolver: ContentResolver) =
+        scope.launch(Dispatchers.IO) {
             val context = config.context()
-            displayOptions(
-                title = context.getString(R.string.mock_import_database_title),
-                data = Pair(
-                    arrayOf(
-                        context.getString(R.string.mock_import_database_option_clean),
-                        context.getString(R.string.mock_import_database_option_replace)
-                    ),
-                    arrayOf(
-                        context.getString(R.string.mock_import_database_option_clean_description),
-                        context.getString(R.string.mock_import_database_option_replace_description)
-                    )
-                )
+            val file = File(
+                MockFileUtils.writeFileContent(
+                    uri,
+                    context.getExternalFilesDir(null),
+                    contentResolver
+                ) ?: ""
             )
-            waitValidation()
-            if (optChoice.get() == 0) importDatabaseInCleanMode(file, context)
-            else importDatabaseReplacing(file, context)
-            optChoice.set(-1)
+            importDatabaseReplacing(file, context)
         }
 
-    internal fun exportDatabaseContent() =
+    internal fun exportDatabaseContent() {
         scope.launch {
             val context = config.context()
             displayOptions(
@@ -170,6 +168,7 @@ object MockInterceptor : Interceptor {
             else exportDatabaseInJsonFiles()
             optChoice.set(-1)
         }
+    }
 
     private fun recordMockInfo(chain: Interceptor.Chain): Response {
         return kotlin.runCatching {
@@ -182,29 +181,42 @@ object MockInterceptor : Interceptor {
             val url = getFileNameByRequest(chain.request())
             mockDao.findMock(url)?.let {
                 synchronized(mockFlow) {
-                    displayOptions(
-                        title = context.getString(R.string.mock_already_saved_title, url),
-                        data = Pair(
-                            arrayOf(
-                                context.getString(R.string.mock_already_saved_option_keep_mock),
-                                context.getString(R.string.mock_already_saved_option_replace_mock)
-                            ),
-                            arrayOf(
-                                context.getString(R.string.mock_already_saved_option_keep_mock_description),
-                                context.getString(R.string.mock_already_saved_option_replace_mock_description)
+                    when(config.replaceMockOption) {
+                        MockConfig.ReplaceMockOption.DEFAULT -> {
+                            displayOptions(
+                                title = context.getString(R.string.mock_already_saved_title, url),
+                                data = Pair(
+                                    arrayOf(
+                                        context.getString(R.string.mock_already_saved_option_keep_mock),
+                                        context.getString(R.string.mock_already_saved_option_replace_mock)
+                                    ),
+                                    arrayOf(
+                                        context.getString(R.string.mock_already_saved_option_keep_mock_description),
+                                        context.getString(R.string.mock_already_saved_option_replace_mock_description)
+                                    )
+                                )
                             )
-                        )
-                    )
-                    waitValidation()
+                            waitValidation()
 
-                    if (optChoice.get() == 1) {
-                        mockDao.insertMock(
-                            MockEntity(
-                                getFileNameByRequest(chain.request()),
-                                mockResponse.peekBody(Long.MAX_VALUE).string()
+                            if (optChoice.get() == 1) {
+                                mockDao.insertMock(
+                                    MockEntity(
+                                        getFileNameByRequest(chain.request()),
+                                        mockResponse.peekBody(Long.MAX_VALUE).string()
+                                    )
+                                )
+                                optChoice.set(-1)
+                            }
+                        }
+                        MockConfig.ReplaceMockOption.REPLACE_MOCK -> {
+                            mockDao.insertMock(
+                                MockEntity(
+                                    getFileNameByRequest(chain.request()),
+                                    mockResponse.peekBody(Long.MAX_VALUE).string()
+                                )
                             )
-                        )
-                        optChoice.set(-1)
+                        }
+                        else -> {}
                     }
                 }
             } ?: run {

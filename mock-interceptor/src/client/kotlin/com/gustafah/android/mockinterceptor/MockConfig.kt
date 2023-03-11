@@ -38,6 +38,7 @@ class MockConfig private constructor(builder: Builder) {
     val delay: Range<Int>
     val additionalMockFiles: List<String>?
     val saveMockMode: OptionRecordMock
+    val replaceMockOption: ReplaceMockOption
     val selectorMode: OptionsSelectorMode
     val context: () -> Context
 
@@ -52,6 +53,7 @@ class MockConfig private constructor(builder: Builder) {
         assetsSeparator = builder.assetsSeparator
         selectorMode = builder.selectorMode
         saveMockMode = builder.saveMockMode
+        replaceMockOption = builder.replaceMockOption
         delay = builder.delay ?: Range(0, 1)
         additionalMockFiles = builder.additionalMock
         context =
@@ -110,6 +112,8 @@ class MockConfig private constructor(builder: Builder) {
             private set
         internal var saveMockMode: OptionRecordMock = OptionRecordMock.DISABLED
             private set
+        internal var replaceMockOption: ReplaceMockOption = ReplaceMockOption.DEFAULT
+            private set
         internal var context: (() -> Context)? = null
             private set
         internal var selectorMode: OptionsSelectorMode = OptionsSelectorMode.ALWAYS_ON_TOP
@@ -125,6 +129,7 @@ class MockConfig private constructor(builder: Builder) {
         fun context(context: () -> Context) = apply { this.context = context }
         fun selectorMode(mode: OptionsSelectorMode) = apply { this.selectorMode = mode }
         fun saveMockMode(saveMock: OptionRecordMock) = apply { this.saveMockMode = saveMock }
+        fun replaceMockOption(replaceMockOption: ReplaceMockOption) = apply { this.replaceMockOption = replaceMockOption }
         fun setDelay(minDelay: Int, maxDelay: Int) = setDelay(Range(minDelay, maxDelay))
         fun setDelay(delay: Range<Int>) = apply { this.delay = delay }
         fun additionalMocks(additionalMockFiles: List<String>) =
@@ -158,5 +163,11 @@ class MockConfig private constructor(builder: Builder) {
         DISABLED,
         RECORD,
         PLAYBACK
+    }
+
+    enum class ReplaceMockOption {
+        DEFAULT,
+        KEEP_MOCK,
+        REPLACE_MOCK
     }
 }

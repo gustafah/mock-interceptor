@@ -12,10 +12,10 @@ class MockExportDatabaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         if (checkWriteExternalPermission()) {
             MockInterceptor.exportDatabaseContent()
-            finish()
         } else {
             requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 3456)
         }
+        finish()
     }
 
     private fun checkWriteExternalPermission(): Boolean {
