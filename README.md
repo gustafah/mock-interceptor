@@ -1,6 +1,6 @@
 # mock-interceptor > $mock_version = 1.6.0
 
-# [Changelog](./CHANGELOG.md)
+# [Changelog](https://github.com/gustafah/mock-interceptor/blob/main/CHANGELOG.md)
 
 We've all been there, constantly waiting on APIs that never come, delaying our development.
 
