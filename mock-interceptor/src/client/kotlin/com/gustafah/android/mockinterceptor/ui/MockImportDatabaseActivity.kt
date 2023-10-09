@@ -4,11 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.gustafah.android.mockinterceptor.MockInterceptor
-import com.gustafah.android.mockinterceptor.MockFileUtils.writeFileContent
+import com.gustafah.android.mockinterceptor.MockDatabaseUtils
 import com.gustafah.android.mockinterceptor.MockUtils.ERROR_FILE_NOT_FOUND
 import com.gustafah.android.mockinterceptor.R
-import java.io.File
 
 internal const val IMPORT_DATABASE_MODE = "import_database_mode"
 internal const val UPDATE_INFO = 3455
@@ -33,10 +31,10 @@ class MockImportDatabaseActivity : AppCompatActivity() {
                 val info = data.data!!
                 when (requestCode) {
                     CLEAR_DATABASE -> {
-                        MockInterceptor.replaceDatabase(info, contentResolver)
+                        MockDatabaseUtils.replaceDatabase(info, contentResolver)
                     }
                     else -> {
-                        MockInterceptor.recreateDatabase(info, contentResolver)
+                        MockDatabaseUtils.recreateDatabase(info, contentResolver)
                     }
                 }
             } else {

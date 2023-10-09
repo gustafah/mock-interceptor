@@ -14,6 +14,16 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas".toString())
+            }
+        }
+    }
+
+    sourceSets {
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
 
     flavorDimensions "dim"
@@ -79,5 +89,6 @@ dependencies {
     implementation dependency_versions.coroutines
 
     api dependency_versions.room
+    api dependency_versions.roomktx
     kapt dependency_versions.roomProcessor
 }

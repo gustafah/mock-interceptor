@@ -1,3 +1,7 @@
+# 1.7.0
+
+Now you can store and retrieve mocks from the database according to the identifier, allowing you create multiple test scenario or data from multiple users using the sames endpoints. Also fixing import with .zip files.
+
 # 1.6.0
 
 Improvement to Database management

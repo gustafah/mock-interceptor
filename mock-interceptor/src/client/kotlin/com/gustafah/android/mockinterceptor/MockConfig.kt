@@ -40,6 +40,7 @@ class MockConfig private constructor(builder: Builder) {
     val saveMockMode: OptionRecordMock
     val replaceMockOption: ReplaceMockOption
     val selectorMode: OptionsSelectorMode
+    var mockGroupIdentifier: String? = null
     val context: () -> Context
 
     private val processors: List<FileProcessor>

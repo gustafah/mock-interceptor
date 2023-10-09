@@ -1,6 +1,7 @@
 package com.gustafah.android.mockinterceptor.persistence
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -11,13 +12,16 @@ import java.io.File
 @Database(
     version = MockInterceptorDatabase.VERSION,
     exportSchema = true,
-    entities = [MockEntity::class]
+    entities = [MockEntity::class],
+    autoMigrations = [
+        AutoMigration(from = 1, to = MockInterceptorDatabase.VERSION)
+    ]
 )
 internal abstract class MockInterceptorDatabase : RoomDatabase() {
 
     companion object {
         const val NAME = "mock-interceptor.db"
-        const val VERSION = 1
+        const val VERSION = 2
 
         private var instance: MockInterceptorDatabase? = null
 

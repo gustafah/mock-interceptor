@@ -215,6 +215,86 @@ Whenever a file is not found, either by a wrongly named @Mock or by an incorrect
 }
 ```
 
+# Record and Playback Mocks
+
+With this library you can also record API responses on a database and play it back if you want to map your API easily. 
+
+## Record Mocks
+
+To start recording your mock files, you need to just configure your Mock Interceptor as such:
+```
+//MockInterceptor setup
+config = MockConfig.Builder()
+  .saveMockMode(OptionRecordMock.RECORD)
+  .context { context } //mandatory
+  .build()
+```
+
+After this configuration, all the API calls will be stored in the database. If a duplicated call occurs, will be displayed a dialog asking if you want to replace the information or ignore. You can also set this on default on the MockInterceptor initialization. 
+
+```
+//MockInterceptor setup
+config = MockConfig.Builder()
+  .saveMockMode(OptionRecordMock.RECORD)
+  .replaceMockOption(ReplaceMockOption.DEFAULT | KEEP_MOCK | REPLACE_MOCK)
+  .context { context } //mandatory
+  .build()
+```
+
+You can also save the mock under some identification (for example, you have multiple users and you need to keep their mocks apart). You only need on run time, define witch identification you want to save the mocks.
+
+```
+MockInterceptor.setMockGroupIdentifier("The name of the group")
+```
+
+## Playback Mocks
+
+After saving all the mocks, you can playback them. You just need to change on the Mock Interceptor setup
+
+```
+//MockInterceptor setup
+config = MockConfig.Builder()
+  .saveMockMode(OptionRecordMock.PLAYBACK)
+  .context { context } //mandatory
+  .build()
+```
+
+and all api calls will be redirected to check if there is the information saved on the database. If you saved under some indentification, you just need to set the group identifier that you record. You can also get the list of group identifiers stored on the database with the function:
+
+> fun getAllMockIdentifiers() : List<String>
+
+## Export, Import, Replace and Delete Data
+
+You can control all the information saved on your database with those commands:
+
+**Export Database**
+The function will ask for READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE from de device, and export all data saved as a .db or a .zip containing all jsons stored.
+> fun exportDatabase()
+
+**Import Database**
+The function will ask for READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE from de device, and import a Json file, a .db file or a .zip file containing all .jsons files you want to import.
+> fun importDatabase()
+
+**Replace Database**
+The function will delete the current database and replace from the content of a .db file.
+> fun replaceDatabase()
+
+**Delete Database**
+The function will delete the current database.
+> fun deleteDatabase()
+
+You can also observe the database operation state with the MockInterceptor liveData. You just need to watch like:
+
+```
+MockInterceptor.databaseObserver.observe(this) { state ->
+    when (state) {
+        MockDatabaseState.LOADING -> TODO()
+        MockDatabaseState.SUCCESS -> TODO()
+        MockDatabaseState.ERROR -> TODO()
+    }
+}
+```
+
 That's all for now
 
 # Thanks
