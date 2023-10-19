@@ -5,24 +5,49 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import android.view.View
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.isVisible
 import com.gustafah.android.mockinterceptor.MockConfig
 import com.gustafah.android.mockinterceptor.MockInterceptor
 import com.gustafah.android.mockinterceptor.notification.MockNotification
-import com.gustafah.android.mockinterceptor.persistence.MockDatabaseState
 import com.gustafah.android.mockinterceptor.sample.R
 import com.gustafah.android.mockinterceptor.sample.repository.SampleRepository
 import com.gustafah.android.mockinterceptor.sample.service.serviceClient
 import com.gustafah.android.mockinterceptor.sample.ui.viewmodel.SampleViewModel
-import kotlinx.android.synthetic.main.activity_sample.*
 
 
 class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
+
+    private val radioGroup1: RadioGroup by lazy { findViewById(R.id.radio_group) }
+    private val buttonSaveDb: Button by lazy { findViewById(R.id.button_save_db) }
+    private val linearDatabase: LinearLayout by lazy { findViewById(R.id.linear_database) }
+    private val radioButtonRecordMode: RadioGroup by lazy { findViewById(R.id.radio_button_record_mode) }
+    private val buttonRecordModeSave: Button by lazy { findViewById(R.id.button_record_mode_save) }
+    private val buttonSetIdentification: Button by lazy { findViewById(R.id.button_set_identification) }
+    private val layoutSetIdentification: LinearLayoutCompat by lazy { findViewById(R.id.layout_set_identification) }
+    private val edittextSetIdentification: EditText by lazy { findViewById(R.id.edittext_set_identification) }
+    private val buttonSaveIdentification: Button by lazy { findViewById(R.id.button_save_identification) }
+    private val buttonFetchIdentifiers: Button by lazy { findViewById(R.id.button_fetch_identifiers) }
+    private val buttonFetchResponse: Button by lazy { findViewById(R.id.button_fetch_response) }
+    private val buttonExportDatabase: Button by lazy { findViewById(R.id.button_export_database) }
+    private val buttonImportDatabase: Button by lazy { findViewById(R.id.button_import_database) }
+    private val buttonReplaceDatabase: Button by lazy { findViewById(R.id.button_replace_database) }
+    private val buttonDeleteDatabase: Button by lazy { findViewById(R.id.button_delete_database) }
+    private val linearMockFile: LinearLayout by lazy { findViewById(R.id.linear_mock_file) }
+    private val buttonSample1: Button by lazy { findViewById(R.id.button_sample1) }
+    private val buttonSample11: Button by lazy { findViewById(R.id.button_sample1_1) }
+    private val buttonSample2: Button by lazy { findViewById(R.id.button_sample2) }
+    private val buttonSample3: Button by lazy { findViewById(R.id.button_sample3) }
+    private val buttonSample4: Button by lazy { findViewById(R.id.button_sample4) }
+    private val buttonSample5: Button by lazy { findViewById(R.id.button_sample5) }
+    private val buttonSample6: Button by lazy { findViewById(R.id.button_sample6) }
+    private val inputPage: EditText by lazy { findViewById(R.id.input_page) }
+    private val buttonSample7: Button by lazy { findViewById(R.id.button_sample7) }
+    private val buttonSample8: Button by lazy { findViewById(R.id.button_sample8) }
+    private val textResponse: TextView by lazy { findViewById(R.id.text_response) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +74,9 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
         setupSaveModeRadioButton(saveMockMode)
         setupRecordRadioButton(replaceMockMode)
 
-        linear_database.isVisible = isOnSaveMockMode
-        linear_mock_file.isVisible = !isOnSaveMockMode
-        radio_button_record_mode.isVisible =
+        linearDatabase.isVisible = isOnSaveMockMode
+        linearMockFile.isVisible = !isOnSaveMockMode
+        radioButtonRecordMode.isVisible =
             saveMockMode == MockConfig.OptionRecordMock.RECORD.ordinal
 
         setupMocksFromDatabase(viewModel, saveMockMode)
@@ -79,26 +104,26 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
 
     private fun setupSaveModeRadioButton(saveMockMode: Int) {
         addOnRadioButton(
-            radio_group,
+            radioGroup1,
             "Response from Mock File",
             MockConfig.OptionRecordMock.DISABLED.ordinal,
             saveMockMode
         )
         addOnRadioButton(
-            radio_group,
+            radioGroup1,
             "Record API response and save on Database",
             MockConfig.OptionRecordMock.RECORD.ordinal,
             saveMockMode
         )
         addOnRadioButton(
-            radio_group,
+            radioGroup1,
             "Playback API response from Database",
             MockConfig.OptionRecordMock.PLAYBACK.ordinal,
             saveMockMode
         )
 
-        button_save_db.setOnClickListener {
-            val checkedView = radio_group.findViewById<View>(radio_group.checkedRadioButtonId)
+        buttonSaveDb.setOnClickListener {
+            val checkedView = radioGroup1.findViewById<View>(radioGroup1.checkedRadioButtonId)
             with(getPreferences(Context.MODE_PRIVATE).edit()) {
                 putInt("SAVE_MOCK_MODE", checkedView.tag.toString().toInt())
                 apply()
@@ -109,25 +134,26 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
 
     private fun setupRecordRadioButton(replaceMockMode: Int) {
         addOnRadioButton(
-            radio_button_record_mode,
+            radioButtonRecordMode,
             "Default",
             MockConfig.ReplaceMockOption.DEFAULT.ordinal,
             replaceMockMode
         )
         addOnRadioButton(
-            radio_button_record_mode,
+            radioButtonRecordMode,
             "Keep Mock",
             MockConfig.ReplaceMockOption.KEEP_MOCK.ordinal,
             replaceMockMode
         )
         addOnRadioButton(
-            radio_button_record_mode,
+            radioButtonRecordMode,
             "Replace Mock",
             MockConfig.ReplaceMockOption.REPLACE_MOCK.ordinal,
             replaceMockMode
         )
-        button_record_mode_save.setOnClickListener {
-            val checkedView = radio_button_record_mode.findViewById<View>(radio_button_record_mode.checkedRadioButtonId)
+        buttonRecordModeSave.setOnClickListener {
+            val checkedView =
+                radioButtonRecordMode.findViewById<View>(radioButtonRecordMode.checkedRadioButtonId)
             with(getPreferences(Context.MODE_PRIVATE).edit()) {
                 putInt("REPLACE_MOCK_MODE", checkedView.tag.toString().toInt())
                 apply()
@@ -137,65 +163,65 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
     }
 
     private fun setupMocksFromDatabase(viewModel: SampleViewModel, saveMockMode: Int) {
-        button_fetch_response.text =
+        buttonFetchResponse.text =
             if (saveMockMode == MockConfig.OptionRecordMock.RECORD.ordinal) "Fetch Response from API"
             else "Fetch Response from Database"
-        button_set_identification.setOnClickListener {
-            layout_set_identification.isVisible = true
+        buttonSetIdentification.setOnClickListener {
+            layoutSetIdentification.isVisible = true
         }
-        button_save_identification.setOnClickListener {
-            layout_set_identification.isVisible = false
-            MockInterceptor.setMockGroupIdentifier(edittext_set_identification.text.toString())
+        buttonSaveIdentification.setOnClickListener {
+            layoutSetIdentification.isVisible = false
+            MockInterceptor.setMockGroupIdentifier(edittextSetIdentification.text.toString())
         }
-        button_fetch_identifiers.setOnClickListener {
+        buttonFetchIdentifiers.setOnClickListener {
             cleanData()
             MockInterceptor.getAllMockIdentifiers().forEach { data ->
                 printData(data)
             }
         }
-        button_fetch_response.setOnClickListener {
+        buttonFetchResponse.setOnClickListener {
             viewModel.fetchResponseMock()
         }
-        button_export_database.setOnClickListener {
+        buttonExportDatabase.setOnClickListener {
             MockInterceptor.exportDatabase()
         }
-        button_import_database.setOnClickListener {
+        buttonImportDatabase.setOnClickListener {
             MockInterceptor.importDatabase()
         }
-        button_replace_database.setOnClickListener {
+        buttonReplaceDatabase.setOnClickListener {
             MockInterceptor.replaceDatabase()
         }
-        button_delete_database.setOnClickListener {
+        buttonDeleteDatabase.setOnClickListener {
             MockInterceptor.deleteDatabase()
         }
     }
 
     private fun setupMocksFromMockFile(viewModel: SampleViewModel) {
-        button_sample1.setOnClickListener {
+        buttonSample1.setOnClickListener {
             viewModel.fetchResponseMock()
         }
-        button_sample1_1.setOnClickListener {
+        buttonSample11.setOnClickListener {
             viewModel.fetchResponseWithNoAdditional()
         }
-        button_sample2.setOnClickListener {
+        buttonSample2.setOnClickListener {
             viewModel.fetchResponseNoMock()
         }
-        button_sample3.setOnClickListener {
+        buttonSample3.setOnClickListener {
             viewModel.fetchResponseNoMockWithParams()
         }
-        button_sample4.setOnClickListener {
+        buttonSample4.setOnClickListener {
             viewModel.fetchResponseMultiMock()
         }
-        button_sample5.setOnClickListener {
+        buttonSample5.setOnClickListener {
             viewModel.fetchResponseNoMockNoFile()
         }
-        button_sample6.setOnClickListener {
+        buttonSample6.setOnClickListener {
             viewModel.fetchResponseMultiMockNoFile()
         }
-        button_sample7.setOnClickListener {
-            viewModel.fetchResponsePaginated(input_page.text.toString())
+        buttonSample7.setOnClickListener {
+            viewModel.fetchResponsePaginated(inputPage.text.toString())
         }
-        button_sample8.setOnClickListener {
+        buttonSample8.setOnClickListener {
             MockNotification.showMockNotification(this)
         }
     }
@@ -233,12 +259,12 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
     }
 
     private fun cleanData() {
-        text_response.text = ""
+        textResponse.text = ""
     }
 
     private fun printData(data: String) {
         println(data)
-        text_response.append(data + "\n")
+        textResponse.append(data + "\n")
     }
 
 }

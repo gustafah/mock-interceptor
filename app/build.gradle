@@ -1,12 +1,12 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-android-extensions'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
     compileSdkVersion 32
-    buildToolsVersion "30.0.3"
+    buildToolsVersion "32.0.0"
 
     defaultConfig {
         minSdkVersion 23
