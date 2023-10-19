@@ -40,6 +40,7 @@ class MockConfig private constructor(builder: Builder) {
     val saveMockMode: OptionRecordMock
     val replaceMockOption: ReplaceMockOption
     val selectorMode: OptionsSelectorMode
+    var mockGroupIdentifier: String? = null
     val context: () -> Context
 
     private val processors: List<FileProcessor>
@@ -54,6 +55,7 @@ class MockConfig private constructor(builder: Builder) {
         selectorMode = builder.selectorMode
         saveMockMode = builder.saveMockMode
         replaceMockOption = builder.replaceMockOption
+        mockGroupIdentifier = builder.mockGroupIdentifier
         delay = builder.delay ?: Range(0, 1)
         additionalMockFiles = builder.additionalMock
         context =
@@ -114,6 +116,8 @@ class MockConfig private constructor(builder: Builder) {
             private set
         internal var replaceMockOption: ReplaceMockOption = ReplaceMockOption.DEFAULT
             private set
+        internal var mockGroupIdentifier: String? = null
+            private set
         internal var context: (() -> Context)? = null
             private set
         internal var selectorMode: OptionsSelectorMode = OptionsSelectorMode.ALWAYS_ON_TOP
@@ -130,6 +134,7 @@ class MockConfig private constructor(builder: Builder) {
         fun selectorMode(mode: OptionsSelectorMode) = apply { this.selectorMode = mode }
         fun saveMockMode(saveMock: OptionRecordMock) = apply { this.saveMockMode = saveMock }
         fun replaceMockOption(replaceMockOption: ReplaceMockOption) = apply { this.replaceMockOption = replaceMockOption }
+        fun setMockGroupIdentifier(mockGroupIdentifier: String) = apply { this.mockGroupIdentifier = mockGroupIdentifier }
         fun setDelay(minDelay: Int, maxDelay: Int) = setDelay(Range(minDelay, maxDelay))
         fun setDelay(delay: Range<Int>) = apply { this.delay = delay }
         fun additionalMocks(additionalMockFiles: List<String>) =

@@ -7,12 +7,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.gustafah.android.mockinterceptor.MockConfig
 import com.gustafah.android.mockinterceptor.MockInterceptor
 import com.gustafah.android.mockinterceptor.notification.MockNotification
+import com.gustafah.android.mockinterceptor.persistence.MockDatabaseState
 import com.gustafah.android.mockinterceptor.sample.R
 import com.gustafah.android.mockinterceptor.sample.repository.SampleRepository
 import com.gustafah.android.mockinterceptor.sample.service.serviceClient
@@ -55,10 +57,13 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
         setupMocksFromDatabase(viewModel, saveMockMode)
         setupMocksFromMockFile(viewModel)
 
+        MockInterceptor.databaseObserver.observe(this) {
+            Toast.makeText(this, it.name, Toast.LENGTH_SHORT).show()
+        }
         viewModel.responseLiveData.observe(this) {
+            cleanData()
             it.forEach { data ->
-                println(data.toJson())
-                text_response.append(data.toJson())
+                printData(data.toJson())
             }
         }
         viewModel.responseErrorLiveData.observe(this) {
@@ -135,6 +140,19 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
         button_fetch_response.text =
             if (saveMockMode == MockConfig.OptionRecordMock.RECORD.ordinal) "Fetch Response from API"
             else "Fetch Response from Database"
+        button_set_identification.setOnClickListener {
+            layout_set_identification.isVisible = true
+        }
+        button_save_identification.setOnClickListener {
+            layout_set_identification.isVisible = false
+            MockInterceptor.setMockGroupIdentifier(edittext_set_identification.text.toString())
+        }
+        button_fetch_identifiers.setOnClickListener {
+            cleanData()
+            MockInterceptor.getAllMockIdentifiers().forEach { data ->
+                printData(data)
+            }
+        }
         button_fetch_response.setOnClickListener {
             viewModel.fetchResponseMock()
         }
@@ -212,6 +230,15 @@ class SampleActivity : AppCompatActivity(R.layout.activity_sample) {
             .create()
             .show()
 
+    }
+
+    private fun cleanData() {
+        text_response.text = ""
+    }
+
+    private fun printData(data: String) {
+        println(data)
+        text_response.append(data + "\n")
     }
 
 }

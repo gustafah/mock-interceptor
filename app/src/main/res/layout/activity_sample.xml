@@ -67,6 +67,43 @@
                 tools:ignore="HardcodedText" />
 
             <Button
+                android:id="@+id/button_set_identification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Set Identifications For Calls"
+                tools:ignore="HardcodedText" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/layout_set_identification"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:weightSum="3">
+
+                <EditText
+                    android:id="@+id/edittext_set_identification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/button_save_identification"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Save"
+                    tools:ignore="HardcodedText"
+                    android:layout_weight="2"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <Button
+                android:id="@+id/button_fetch_identifiers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Get All Identifiers"
+                tools:ignore="HardcodedText" />
+
+            <Button
                 android:id="@+id/button_fetch_response"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
